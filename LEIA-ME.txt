@@ -1,20 +1,17 @@
-RM Assist - Revisão Clientes, Locais e Equipamentos
+RM Assist - Revisão Orçamentos e PMOC
 
 Inclui:
-- edição de cliente
-- ativar/inativar cliente
-- edição de local
-- edição de equipamento
-- ativar/inativar equipamento
-- botões Editar diretamente na ficha do cliente
-- validação de nome do cliente, nome do local e ambiente do equipamento
-- mantém os vínculos cliente > local > equipamento
-
-Observação:
-Não incluí exclusão física de registros nesta etapa para evitar perda acidental de histórico. Clientes e equipamentos podem ser inativados.
+- edição completa de orçamentos
+- edição completa de contratos PMOC
+- valores aceitam vírgula decimal
+- validação de valores
+- PMOC impede próxima visita anterior ao início do contrato
+- botões Editar nas listas
+- manutenção dos status sem apagar histórico
 
 Envio:
 1. Extraia o ZIP.
 2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua app/clientes/[id]/page.tsx e adicione as novas pastas de edição.
-4. Faça Commit changes e aguarde a Vercel publicar.
+3. Substitua app/orcamentos/page.tsx e app/pmoc/page.tsx.
+4. Adicione as novas pastas app/orcamentos/[id]/editar e app/pmoc/[id]/editar.
+5. Faça Commit changes e aguarde a Vercel publicar.
