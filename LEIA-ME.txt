@@ -1,14 +1,22 @@
-RM Assist - Serviços para uso diário
+RM Assist - Acabamento Agenda e Histórico
 
-Melhorias:
-- chamados concluídos/cancelados ficam ocultos por padrão
-- OS concluídas ficam ocultas por padrão
-- botão "Ver encerrados" mostra o histórico sem sair da tela
-- contador de itens ativos no topo
-- mantém o fluxo seguro de abrir/reutilizar a OS existente
+Agenda:
+- mostra quantidade de atendimentos hoje
+- mostra quantidade de atrasados
+- identifica claramente itens atrasados
+- botão informa quantos atrasados existem
+- mantém abertura direta da OS quando já iniciada
+
+Histórico:
+- filtro por todo o histórico, este mês ou este ano
+- busca por cliente, OS, serviço e equipamento
+- mostra quantidade de OS no filtro
+- mostra total de valores de serviço do período filtrado
 
 Envio:
 1. Extraia o ZIP.
 2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua app/servicos/page.tsx.
+3. Substitua:
+   - app/agenda/page.tsx
+   - app/historico/page.tsx
 4. Faça Commit changes e aguarde GitHub Actions/Vercel.
