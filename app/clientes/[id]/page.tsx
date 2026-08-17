@@ -1,8 +1,9 @@
 "use client";
-import Link from "next/link"; import {useEffect,useState} from "react"; import {useParams} from "next/navigation"; import {readStore} from "@/lib/local-store";
+import Link from "next/link"; import {useEffect,useState} from "react"; import {useParams} from "next/navigation"; import {getSupabase} from "@/lib/supabase";
 export default function Detalhe(){
- const {id}=useParams<{id:string}>(); const [c,setC]=useState<any>(); const [locais,setLocais]=useState<any[]>([]); const [eqs,setEqs]=useState<any[]>([]);
- useEffect(()=>{setC(readStore<any>("clientes").find(x=>x.id===id));setLocais(readStore<any>("locais").filter(x=>x.cliente_id===id));setEqs(readStore<any>("equipamentos").filter(x=>x.cliente_id===id));},[id]);
+ const {id}=useParams<{id:string}>(); const [c,setC]=useState<any>(); const [locais,setLocais]=useState<any[]>([]); const [eqs,setEqs]=useState<any[]>([]); const [erro,setErro]=useState("");
+ useEffect(()=>{(async()=>{const s=getSupabase();if(!s)return setErro("Supabase não configurado.");const [{data:cli,error:e1},{data:loc,error:e2},{data:eq,error:e3}]=await Promise.all([s.from("clientes").select("*").eq("id",id).single(),s.from("locais").select("*").eq("cliente_id",id).order("nome"),s.from("equipamentos").select("*").eq("cliente_id",id).order("ambiente")]);if(e1||e2||e3)setErro(e1?.message||e2?.message||e3?.message||"");setC(cli);setLocais(loc||[]);setEqs(eq||[]);})()},[id]);
+ if(erro)return <div className="page"><div className="error-box">{erro}</div></div>;
  if(!c)return <div className="page">Carregando...</div>;
  return <div className="page"><header className="simple-header"><div><p className="eyebrow">CLIENTE</p><h1>{c.nome_fantasia||c.nome}</h1><p>{c.nome_fantasia?c.nome:c.cpf_cnpj||"Cadastro do cliente"}</p></div><Link href={`/chamados/novo?cliente=${id}`} className="primary-button">+ Chamado</Link></header>
  <section className="detail-grid"><article className="info-card"><h3>Contato</h3><p><b>Telefone:</b> {c.telefone||"—"}</p><p><b>WhatsApp:</b> {c.whatsapp||"—"}</p><p><b>E-mail:</b> {c.email||"—"}</p></article><article className="info-card"><h3>Resumo</h3><p><b>Locais:</b> {locais.length}</p><p><b>Equipamentos:</b> {eqs.length}</p></article></section>
