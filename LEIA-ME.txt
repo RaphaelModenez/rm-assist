@@ -1,14 +1,14 @@
-RM Assist - Acabamento para iPhone
+RM Assist - Proteção contra OS duplicada
 
 Inclui:
-- campos com 16px no iPhone para evitar zoom automático ao tocar
-- alvos de toque de no mínimo 44px
-- melhor quebra de textos longos
-- cartões e botões mais adaptados a telas pequenas
-- pequenos ajustes de comportamento de rolagem e toque
+- Antes de criar uma OS, verifica se já existe uma OS ligada ao chamado.
+- Se já existir, abre a OS existente.
+- Chamados em atendimento passam a mostrar 'Abrir atendimento'.
+- Bloqueia cliques simultâneos no botão de iniciar atendimento.
+- O banco Supabase também recebeu uma proteção única para impedir duas OS para o mesmo chamado.
 
 Envio:
 1. Extraia o ZIP.
 2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Confirme a substituição de app/layout.tsx e a criação de app/iphone.css.
+3. Substitua app/servicos/page.tsx.
 4. Faça Commit changes e aguarde a Vercel publicar.
