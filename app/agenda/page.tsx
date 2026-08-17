@@ -21,7 +21,7 @@ export default function Agenda(){
   useEffect(()=>{(async()=>{
     const s=getSupabase(); if(!s){setErro("Supabase não configurado.");setLoading(false);return}
     const {data,error}=await s.from("chamados")
-      .select("*, clientes(nome,nome_fantasia)")
+      .select("*, clientes(nome,nome_fantasia), ordens_servico(id,status)")
       .not("data_agendada","is",null)
       .order("data_agendada",{ascending:true})
       .order("hora_agendada",{ascending:true});
@@ -36,6 +36,7 @@ export default function Agenda(){
   }),[ch,mostrarPassados,hoje]);
 
   const nome=(x:any)=>x.clientes?.nome_fantasia||x.clientes?.nome||"Cliente";
+  const destino=(x:any)=>x.ordens_servico?.[0]?.id?`/os/${x.ordens_servico[0].id}`:"/servicos";
 
   return <div className="page">
     <header className="simple-header"><div><p className="eyebrow">RM ASSIST</p><h1>Agenda</h1><p>Atendimentos agendados.</p></div><Link href="/chamados/novo" className="primary-button">+ Agendar</Link></header>
@@ -44,6 +45,6 @@ export default function Agenda(){
     </div>
     {erro&&<div className="error-box">{erro}</div>}
     {loading?<p className="muted">Carregando agenda...</p>:lista.length===0?<section className="empty-state"><div className="empty-icon">▣</div><h2>Agenda vazia</h2><p>Nenhum atendimento agendado para exibir.</p></section>:
-    <div className="timeline">{lista.map(x=><Link href="/servicos" className="timeline-item" key={x.id}><div className="timeline-date"><strong>{fmtData(x.data_agendada)}</strong><span>{x.hora_agendada?.slice(0,5)||"—"}</span></div><div><h3>{nome(x)}</h3><p>{x.tipo_servico}</p><small>{x.descricao}</small></div></Link>)}</div>}
+    <div className="timeline">{lista.map(x=><Link href={destino(x)} className="timeline-item" key={x.id}><div className="timeline-date"><strong>{fmtData(x.data_agendada)}</strong><span>{x.hora_agendada?.slice(0,5)||"—"}</span></div><div><h3>{nome(x)}</h3><p>{x.tipo_servico}</p><small>{x.descricao}</small>{x.status==="em_atendimento"&&<small style={{display:"block",marginTop:4,fontWeight:700}}>Atendimento em andamento</small>}</div></Link>)}</div>}
   </div>
 }

@@ -1,17 +1,16 @@
-RM Assist - Revisão Orçamentos e PMOC
+RM Assist - Revisão Financeiro, Agenda e Navegação
 
 Inclui:
-- edição completa de orçamentos
-- edição completa de contratos PMOC
-- valores aceitam vírgula decimal
-- validação de valores
-- PMOC impede próxima visita anterior ao início do contrato
-- botões Editar nas listas
-- manutenção dos status sem apagar histórico
+- Financeiro separa OS com valor de OS sem valor.
+- Totais financeiros somam apenas OS com valor informado.
+- Financeiro exibe data e hora da conclusão.
+- Agenda abre diretamente a OS quando o atendimento já estiver em andamento.
+- Agenda sinaliza atendimentos em andamento.
+- Menu inferior marca Serviços como ativo também em Chamados e OS.
+- Menu Mais permanece ativo em Histórico, Equipamentos, Relatórios, Orçamentos, Financeiro e PMOC.
 
 Envio:
 1. Extraia o ZIP.
-2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua app/orcamentos/page.tsx e app/pmoc/page.tsx.
-4. Adicione as novas pastas app/orcamentos/[id]/editar e app/pmoc/[id]/editar.
-5. Faça Commit changes e aguarde a Vercel publicar.
+2. Envie as pastas app e components ao GitHub mantendo a estrutura.
+3. Substitua app/financeiro/page.tsx, app/agenda/page.tsx e components/BottomNav.tsx.
+4. Faça Commit changes e aguarde a Vercel publicar.
