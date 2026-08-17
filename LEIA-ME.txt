@@ -1,14 +1,19 @@
-RM Assist - Números brasileiros e validação da OS
+RM Assist - Revisão do relatório e histórico
 
-Ajustes:
-- Aceita vírgula decimal em medições (ex.: 7,5 A; 12,3 °C).
-- Aceita vírgula decimal em valores de materiais e valor do serviço.
-- Corrige o cálculo de ΔT quando os valores são digitados com vírgula.
-- Impede finalizar a OS sem informar a situação final do equipamento.
-- Mostra mensagem clara se o valor do serviço for inválido.
+Inclui:
+- Checklist com nomes amigáveis: Conforme, Não conforme e N/A.
+- Relatório mostra todas as medições técnicas salvas.
+- Números técnicos exibidos com vírgula decimal.
+- Exibe observações das medições e número de série do equipamento.
+- Exibe total de materiais registrado.
+- Histórico também pesquisa pela situação final.
+- Histórico mostra data e hora da conclusão e situação final da OS.
+
+Observação:
+O valor de materiais aparece separado do valor do serviço para não somar automaticamente valores que podem já estar incluídos no preço cobrado.
 
 Envio:
 1. Extraia o ZIP.
 2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua app/os/[id]/page.tsx.
+3. Substitua os dois page.tsx.
 4. Faça Commit changes e aguarde a Vercel publicar.
