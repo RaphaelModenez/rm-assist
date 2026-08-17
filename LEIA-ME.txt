@@ -1,19 +1,20 @@
-RM Assist - Revisão do relatório e histórico
+RM Assist - Revisão Clientes, Locais e Equipamentos
 
 Inclui:
-- Checklist com nomes amigáveis: Conforme, Não conforme e N/A.
-- Relatório mostra todas as medições técnicas salvas.
-- Números técnicos exibidos com vírgula decimal.
-- Exibe observações das medições e número de série do equipamento.
-- Exibe total de materiais registrado.
-- Histórico também pesquisa pela situação final.
-- Histórico mostra data e hora da conclusão e situação final da OS.
+- edição de cliente
+- ativar/inativar cliente
+- edição de local
+- edição de equipamento
+- ativar/inativar equipamento
+- botões Editar diretamente na ficha do cliente
+- validação de nome do cliente, nome do local e ambiente do equipamento
+- mantém os vínculos cliente > local > equipamento
 
 Observação:
-O valor de materiais aparece separado do valor do serviço para não somar automaticamente valores que podem já estar incluídos no preço cobrado.
+Não incluí exclusão física de registros nesta etapa para evitar perda acidental de histórico. Clientes e equipamentos podem ser inativados.
 
 Envio:
 1. Extraia o ZIP.
 2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua os dois page.tsx.
+3. Substitua app/clientes/[id]/page.tsx e adicione as novas pastas de edição.
 4. Faça Commit changes e aguarde a Vercel publicar.
