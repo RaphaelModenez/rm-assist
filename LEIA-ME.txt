@@ -1,21 +1,14 @@
-RM Assist - Acesso protegido | Etapa 2
+RM Assist - Painel para uso diário
 
-O banco de dados já foi protegido no Supabase para aceitar somente usuários autenticados.
-
-Este patch:
-- remove o botão de criar nova conta da tela de login
-- mantém apenas e-mail + senha + Entrar
-- prepara as fotos da OS e do relatório para bucket privado usando URLs temporárias assinadas
+Melhorias:
+- cartões do painel agora são atalhos clicáveis
+- próximos serviços abrem diretamente a OS quando o atendimento já foi iniciado
+- chamados ainda não iniciados levam para Serviços
+- alerta no painel quando há atendimentos agendados em atraso
+- status "em atendimento" fica mais legível no painel
 
 Envio:
 1. Extraia o ZIP.
-2. Envie as pastas app e components ao GitHub mantendo a estrutura.
-3. Substitua:
-   - components/AuthGate.tsx
-   - app/os/[id]/page.tsx
-   - app/os/[id]/relatorio/page.tsx
-4. Faça Commit changes.
-5. Aguarde GitHub Actions e Vercel.
-
-Depois diga: "patch segurança enviado".
-Aí o bucket de fotos será mudado de público para privado no Supabase.
+2. Envie a pasta app ao GitHub mantendo a estrutura.
+3. Substitua app/page.tsx.
+4. Faça Commit changes e aguarde GitHub Actions/Vercel.
