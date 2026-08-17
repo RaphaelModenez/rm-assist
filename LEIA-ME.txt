@@ -1,14 +1,16 @@
-RM Assist - Patch Supabase Serviços
+RM Assist - Patch Fotos e Relatório
 
-Substitui armazenamento local por Supabase em:
-- Novo chamado
-- Agenda
-- Serviços
-- Ordem de Serviço (diagnóstico, checklist, medições, materiais e conclusão)
+Inclui:
+- upload de fotos direto do iPhone/câmera para Supabase Storage
+- fotos do diagnóstico e execução
+- remoção de fotos
+- relatório final lendo os dados do Supabase
+- registro fotográfico no relatório
+- impressão/salvamento em PDF pelo navegador
 
-Como enviar:
-1. Extraia o ZIP.
-2. No GitHub, use Add file > Upload files.
-3. Arraste a pasta app do conteúdo extraído (mantendo a estrutura).
-4. Confirme a substituição dos arquivos existentes e faça Commit changes.
-5. Aguarde o deploy automático da Vercel.
+Envio:
+1. Extraia este ZIP.
+2. No GitHub: Add file > Upload files.
+3. Envie a pasta app mantendo a estrutura.
+4. Confirme a substituição dos dois page.tsx existentes.
+5. Faça Commit changes e aguarde a Vercel publicar.
