@@ -1,0 +1,6 @@
+"use client"; import {useEffect,useState} from "react"; import Link from "next/link"; import {readStore} from "@/lib/local-store"; import {fmtData} from "@/lib/domain";
+export default function Agenda(){const [ch,setCh]=useState<any[]>([]);const [cs,setCs]=useState<any[]>([]);useEffect(()=>{setCh(readStore<any>("chamados").filter(x=>x.data_agendada).sort((a,b)=>(a.data_agendada+a.hora_agendada).localeCompare(b.data_agendada+b.hora_agendada)));setCs(readStore("clientes"))},[]);
+const nome=(id:string)=>{const c=cs.find(x=>x.id===id);return c?.nome_fantasia||c?.nome||"Cliente"};
+return <div className="page"><header className="simple-header"><div><p className="eyebrow">RM ASSIST</p><h1>Agenda</h1><p>Atendimentos agendados.</p></div><Link href="/chamados/novo" className="primary-button">+ Agendar</Link></header>
+{ch.length===0?<section className="empty-state"><div className="empty-icon">▣</div><h2>Agenda vazia</h2><p>Os chamados agendados aparecerão aqui.</p></section>:<div className="timeline">{ch.map(x=><Link href="/servicos" className="timeline-item" key={x.id}><div className="timeline-date"><strong>{fmtData(x.data_agendada)}</strong><span>{x.hora_agendada}</span></div><div><h3>{nome(x.cliente_id)}</h3><p>{x.tipo_servico}</p><small>{x.descricao}</small></div></Link>)}</div>}
+</div>}

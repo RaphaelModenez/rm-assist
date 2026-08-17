@@ -1,0 +1,16 @@
+"use client"; import {useEffect,useState} from "react"; import {useParams} from "next/navigation"; import {readStore} from "@/lib/local-store"; import {moeda} from "@/lib/domain";
+export default function Relatorio(){const {id}=useParams<{id:string}>();const [d,setD]=useState<any>({});
+useEffect(()=>{const os=readStore<any>("ordens").find(x=>x.id===id);if(!os)return;setD({os,cliente:readStore<any>("clientes").find(x=>x.id===os.cliente_id),local:readStore<any>("locais").find(x=>x.id===os.local_id),eq:readStore<any>("equipamentos").find(x=>x.id===os.equipamento_id),check:readStore<any>("checklists").filter(x=>x.os_id===id),med:readStore<any>("medicoes").find(x=>x.os_id===id),mats:readStore<any>("materiais").filter(x=>x.os_id===id),ass:readStore<any>("assinaturas").find(x=>x.os_id===id)});},[id]); if(!d.os)return <div className="page">Carregando relatório...</div>;
+return <div className="report-wrap"><div className="report-actions no-print"><button className="secondary-button" onClick={()=>history.back()}>Voltar</button><button className="primary-button" onClick={()=>window.print()}>Imprimir / Salvar PDF</button></div><article className="report">
+<header className="report-header"><div><h1>RM Assist</h1><p>Relatório de Ordem de Serviço</p></div><div><strong>OS #{String(d.os.numero).padStart(4,"0")}</strong><p>{new Date(d.os.termino||Date.now()).toLocaleDateString("pt-BR")}</p></div></header>
+<section><h2>Cliente</h2><p><b>{d.cliente?.nome_fantasia||d.cliente?.nome}</b><br/>{d.local?.nome||""} {d.local?.endereco||""}<br/>{d.cliente?.telefone||d.cliente?.whatsapp||""}</p></section>
+<section><h2>Equipamento</h2><p>{[d.eq?.ambiente,d.eq?.tipo,d.eq?.marca,d.eq?.modelo,d.eq?.capacidade_btu?d.eq.capacidade_btu+" BTU":null,d.eq?.refrigerante].filter(Boolean).join(" • ")||"Não especificado"}</p></section>
+<section><h2>Diagnóstico</h2><p>{d.os.diagnostico||"—"}</p></section>
+<section><h2>Serviço executado</h2><p>{d.os.servico_executado||"—"}</p></section>
+{d.check.length>0&&<section><h2>Checklist</h2><table><tbody>{d.check.map((x:any)=><tr key={x.id}><td>{x.categoria} — {x.item}</td><td>{x.status||"—"}</td></tr>)}</tbody></table></section>}
+{d.med&&<section><h2>Medições</h2><div className="report-grid"><p>Retorno: <b>{d.med.retorno||"—"} °C</b></p><p>Insuflamento: <b>{d.med.insuflamento||"—"} °C</b></p><p>ΔT: <b>{d.med.delta_t||"—"} °C</b></p><p>Tensão: <b>{d.med.tensao||"—"} V</b></p><p>Corrente: <b>{d.med.corrente||"—"} A</b></p><p>Sucção: <b>{d.med.pressao_succao||"—"}</b></p></div></section>}
+{d.mats.length>0&&<section><h2>Materiais</h2><table><tbody>{d.mats.map((m:any)=><tr key={m.id}><td>{m.quantidade} × {m.descricao}</td><td>{moeda(m.valor_total)}</td></tr>)}</tbody></table></section>}
+<section><h2>Conclusão</h2><p><b>Situação:</b> {d.os.situacao_final||"—"}<br/><b>Recomendações:</b> {d.os.recomendacoes||"—"}<br/><b>Pendências:</b> {d.os.pendencias||"—"}</p></section>
+<section><h2>Financeiro</h2><p><b>Valor:</b> {moeda(d.os.valor_servico)} • <b>Pagamento:</b> {d.os.forma_pagamento||"—"}</p></section>
+<footer className="report-footer"><div><span>Responsável pelo cliente</span><strong>{d.ass?.nome_cliente||"________________________"}</strong></div><div><span>Técnico responsável</span><strong>RM Ar Condicionado</strong></div></footer>
+</article></div>}

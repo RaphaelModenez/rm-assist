@@ -1,0 +1,6 @@
+"use client"; import {FormEvent,useState} from "react"; import {useParams,useRouter} from "next/navigation"; import {addStore} from "@/lib/local-store";
+export default function NovoLocal(){const {id}=useParams<{id:string}>();const r=useRouter();const [f,setF]=useState({nome:"",endereco:"",numero:"",bairro:"",cidade:"",estado:"SP",cep:"",referencia:""});
+function save(e:FormEvent){e.preventDefault();if(!f.nome)return;addStore("locais",{...f,id:crypto.randomUUID(),cliente_id:id});r.push(`/clientes/${id}`)}
+return <div className="page"><header className="simple-header"><div><p className="eyebrow">LOCAL</p><h1>Novo local</h1></div></header><form className="form-card" onSubmit={save}>
+{[["nome","Nome do local *"],["endereco","Endereço"],["numero","Número"],["bairro","Bairro"],["cidade","Cidade"],["estado","Estado"],["cep","CEP"],["referencia","Referência"]].map(([k,l])=><div className="field" key={k}><label>{l}</label><input value={(f as any)[k]} onChange={e=>setF({...f,[k]:e.target.value})}/></div>)}
+<div className="form-actions"><button type="button" className="secondary-button" onClick={()=>r.back()}>Cancelar</button><button className="primary-button">Salvar local</button></div></form></div>}
