@@ -1,0 +1,14 @@
+RM Assist - Patch Supabase Serviços
+
+Substitui armazenamento local por Supabase em:
+- Novo chamado
+- Agenda
+- Serviços
+- Ordem de Serviço (diagnóstico, checklist, medições, materiais e conclusão)
+
+Como enviar:
+1. Extraia o ZIP.
+2. No GitHub, use Add file > Upload files.
+3. Arraste a pasta app do conteúdo extraído (mantendo a estrutura).
+4. Confirme a substituição dos arquivos existentes e faça Commit changes.
+5. Aguarde o deploy automático da Vercel.
