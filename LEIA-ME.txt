@@ -1,27 +1,18 @@
-RM Assist - Correção de duplicidade e exclusão segura
+RM Assist - Correção do botão Salvar execução
 
-Corrige o problema observado ao salvar local:
-- trava imediata contra múltiplos envios
-- botão mostra "Salvando..." e fica desativado
-- antes de inserir, verifica se o mesmo local já existe para o cliente
+O que foi alterado:
+- botão Salvar execução agora usa uma função dedicada
+- valida se existe descrição do serviço executado
+- salva e lê a OS novamente na mesma operação para confirmar que realmente gravou
+- mostra "Execução salva com sucesso" somente após confirmação do banco
+- remove o salvamento automático de Recomendações ao sair do campo, evitando duas atualizações simultâneas
+- bloqueia Salvar execução enquanto uma foto ainda está sendo enviada
 
-Exclusão:
-- adiciona botão Apagar em cada local
-- local só é apagado se não estiver ligado a equipamento, chamado ou OS
-- adiciona botão Apagar cliente
-- cliente só é apagado quando não possui nenhum registro dependente
-- clientes com histórico devem ser mantidos como Inativos para preservar dados
-
-Para os 7 locais duplicados:
-- abra o cliente
-- mantenha um local correto
-- use Apagar nos demais
-- como os duplicados acabaram de ser criados e provavelmente não têm vínculos, devem ser removidos normalmente
+Observação:
+Nos logs do Supabase, a atualização da OS apareceu com resposta 204 (aceita pelo banco), então o problema parece estar no fluxo da tela e não na estrutura da tabela.
 
 Envio:
 1. Extraia o ZIP.
 2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua:
-   app/clientes/[id]/locais/novo/page.tsx
-   app/clientes/[id]/page.tsx
+3. Substitua app/os/[id]/page.tsx.
 4. Faça Commit changes e aguarde GitHub Actions/Vercel.

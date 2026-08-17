@@ -71,6 +71,40 @@ export default function OSPage(){
     return true;
   }
 
+  async function saveExecucao(){
+    if(salvando)return;
+    const s=getSupabase(); if(!s)return setErro("Supabase não configurado.");
+    const servico=String(os.servico_executado||"").trim();
+    if(!servico)return setErro("Descreva o serviço executado antes de salvar.");
+
+    setSalvando(true); setErro(""); setSalvo("");
+    try{
+      const {data,error}=await s.from("ordens_servico")
+        .update({
+          servico_executado:servico,
+          recomendacoes:os.recomendacoes||null,
+          updated_at:new Date().toISOString()
+        })
+        .eq("id",id)
+        .select("id,servico_executado,recomendacoes")
+        .single();
+
+      if(error)throw error;
+      if(!data?.id)throw new Error("A OS não foi confirmada após o salvamento.");
+
+      setOs((atual:any)=>({...atual,
+        servico_executado:data.servico_executado,
+        recomendacoes:data.recomendacoes
+      }));
+      setSalvo("Execução salva com sucesso");
+      setTimeout(()=>setSalvo(""),1800);
+    }catch(e:any){
+      setErro(e?.message||"Não foi possível salvar a execução.");
+    }finally{
+      setSalvando(false);
+    }
+  }
+
   async function uploadFotos(files:FileList|null,tipo:string){
     if(!files?.length)return;
     const s=getSupabase(); if(!s)return setErro("Supabase não configurado.");
@@ -176,7 +210,7 @@ export default function OSPage(){
 
     {tab==="medicoes"&&<section className="form-card"><h3>Medições técnicas</h3><div className="measure-grid">{[["retorno","Retorno °C"],["insuflamento","Insuflamento °C"],["tensao","Tensão V"],["corrente","Corrente A"],["pressao_succao","Sucção"],["pressao_descarga","Descarga"],["superaquecimento","Superaquecimento °C"],["subresfriamento","Sub-resfriamento °C"]].map(([k,l])=><div className="field" key={k}><label>{l}</label><input inputMode="decimal" value={med[k]??""} onChange={e=>setMed({...med,[k]:e.target.value})}/></div>)}</div><div className="delta-card">ΔT calculado: <strong>{delta} °C</strong></div><div className="field"><label>Observações</label><textarea rows={3} value={med.observacoes||""} onChange={e=>setMed({...med,observacoes:e.target.value})}/></div><button className="primary-button" onClick={saveMed}>Salvar medições</button></section>}
 
-    {tab==="execucao"&&<section className="form-card"><h3>Execução do serviço</h3><div className="field"><label>Serviço executado</label><textarea rows={6} value={os.servico_executado||""} onChange={e=>setOs({...os,servico_executado:e.target.value})}/></div><button type="button" className="secondary-button" disabled={salvando} onClick={()=>patchOS({servico_executado:os.servico_executado||null,recomendacoes:os.recomendacoes||null})}>{salvando?"Salvando...":"Salvar execução"}</button><h3 className="form-section-title">Materiais / peças</h3><div className="field-grid"><div className="field"><label>Descrição</label><input value={material.descricao} onChange={e=>setMaterial({...material,descricao:e.target.value})}/></div><div className="field"><label>Quantidade</label><input type="number" value={material.quantidade} onChange={e=>setMaterial({...material,quantidade:e.target.value})}/></div></div><div className="field"><label>Valor unitário</label><input inputMode="decimal" value={material.valor_unitario} onChange={e=>setMaterial({...material,valor_unitario:e.target.value})}/></div><button type="button" className="secondary-button" onClick={addMat}>+ Adicionar material</button>{mats.map(m=><div className="material-line" key={m.id}><span>{m.quantidade} × {m.descricao}</span><strong>{moeda(m.valor_total)}</strong></div>)}<div className="field"><label>Recomendações</label><textarea rows={3} value={os.recomendacoes||""} onChange={e=>setOs({...os,recomendacoes:e.target.value})} onBlur={()=>patchOS({recomendacoes:os.recomendacoes||null})}/></div><div className="photo-input"><label>Fotos antes / durante / depois</label><input type="file" accept="image/*" capture="environment" multiple onChange={e=>uploadFotos(e.target.files,"execucao")}/>{enviandoFoto&&<small>Enviando foto...</small>}</div>{fotos.filter(f=>f.tipo==="execucao").length>0&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))",gap:12,marginTop:14}}>{fotos.filter(f=>f.tipo==="execucao").map(f=><div style={{display:"flex",flexDirection:"column",gap:8}} key={f.id}><img style={{width:"100%",aspectRatio:"4 / 3",objectFit:"cover",borderRadius:14,border:"1px solid #e5e7eb"}} src={fotoUrl(f)} alt={f.legenda||"Foto"}/><button type="button" className="secondary-button" onClick={()=>removerFoto(f)}>Remover</button></div>)}</div>}</section>}
+    {tab==="execucao"&&<section className="form-card"><h3>Execução do serviço</h3><div className="field"><label>Serviço executado</label><textarea rows={6} value={os.servico_executado||""} onChange={e=>setOs({...os,servico_executado:e.target.value})}/></div><button type="button" className="secondary-button" disabled={salvando||enviandoFoto} onClick={saveExecucao}>{salvando?"Salvando...":"Salvar execução"}</button><h3 className="form-section-title">Materiais / peças</h3><div className="field-grid"><div className="field"><label>Descrição</label><input value={material.descricao} onChange={e=>setMaterial({...material,descricao:e.target.value})}/></div><div className="field"><label>Quantidade</label><input type="number" value={material.quantidade} onChange={e=>setMaterial({...material,quantidade:e.target.value})}/></div></div><div className="field"><label>Valor unitário</label><input inputMode="decimal" value={material.valor_unitario} onChange={e=>setMaterial({...material,valor_unitario:e.target.value})}/></div><button type="button" className="secondary-button" onClick={addMat}>+ Adicionar material</button>{mats.map(m=><div className="material-line" key={m.id}><span>{m.quantidade} × {m.descricao}</span><strong>{moeda(m.valor_total)}</strong></div>)}<div className="field"><label>Recomendações</label><textarea rows={3} value={os.recomendacoes||""} onChange={e=>setOs({...os,recomendacoes:e.target.value})}/></div><div className="photo-input"><label>Fotos antes / durante / depois</label><input type="file" accept="image/*" capture="environment" multiple onChange={e=>uploadFotos(e.target.files,"execucao")}/>{enviandoFoto&&<small>Enviando foto...</small>}</div>{fotos.filter(f=>f.tipo==="execucao").length>0&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))",gap:12,marginTop:14}}>{fotos.filter(f=>f.tipo==="execucao").map(f=><div style={{display:"flex",flexDirection:"column",gap:8}} key={f.id}><img style={{width:"100%",aspectRatio:"4 / 3",objectFit:"cover",borderRadius:14,border:"1px solid #e5e7eb"}} src={fotoUrl(f)} alt={f.legenda||"Foto"}/><button type="button" className="secondary-button" onClick={()=>removerFoto(f)}>Remover</button></div>)}</div>}</section>}
 
     {tab==="conclusao"&&<section className="form-card"><h3>Conclusão</h3><div className="field"><label>Situação final do equipamento</label><select value={os.situacao_final||""} onChange={e=>{setOs({...os,situacao_final:e.target.value});patchOS({situacao_final:e.target.value})}}><option value="">Selecione</option><option>Operando normalmente</option><option>Operando com ressalvas</option><option>Equipamento parado</option><option>Aguardando peça / retorno</option></select></div><div className="field"><label>Pendências</label><textarea rows={3} value={os.pendencias||""} onChange={e=>setOs({...os,pendencias:e.target.value})} onBlur={()=>patchOS({pendencias:os.pendencias||null})}/></div><div className="field-grid"><div className="field"><label>Valor do serviço (R$)</label><input inputMode="decimal" value={os.valor_servico??""} onChange={e=>setOs({...os,valor_servico:e.target.value})} onBlur={()=>{const v=numBR(os.valor_servico);if(v!==null||os.valor_servico==="")patchOS({valor_servico:v||0})}}/></div><div className="field"><label>Forma de pagamento</label><select value={os.forma_pagamento||""} onChange={e=>{setOs({...os,forma_pagamento:e.target.value});patchOS({forma_pagamento:e.target.value||null})}}><option value="">Selecione</option><option>PIX</option><option>Dinheiro</option><option>Cartão</option><option>Boleto</option><option>Faturado</option></select></div></div><div className="field"><label>Responsável pelo cliente / aceite</label><input value={assinatura} onChange={e=>setAssinatura(e.target.value)} placeholder="Nome de quem acompanhou o serviço"/></div><button className="primary-button full-button" disabled={salvando||enviandoFoto} onClick={finalizar}>{salvando?"Finalizando...":enviandoFoto?"Aguarde o envio das fotos...":"Finalizar OS e gerar relatório"}</button></section>}
   </div>
