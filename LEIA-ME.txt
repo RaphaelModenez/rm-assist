@@ -1,14 +1,15 @@
-RM Assist - Proteção contra OS duplicada
+RM Assist - Salvamento seguro da OS
 
-Inclui:
-- Antes de criar uma OS, verifica se já existe uma OS ligada ao chamado.
-- Se já existir, abre a OS existente.
-- Chamados em atendimento passam a mostrar 'Abrir atendimento'.
-- Bloqueia cliques simultâneos no botão de iniciar atendimento.
-- O banco Supabase também recebeu uma proteção única para impedir duas OS para o mesmo chamado.
+Ajustes:
+- Botão explícito para salvar diagnóstico.
+- Botão explícito para salvar execução.
+- Mensagem visual quando checklist, medições ou campos principais são salvos.
+- Ao finalizar, o app grava novamente diagnóstico, execução, recomendações, conclusão e financeiro antes de concluir.
+- Não permite finalizar enquanto fotos ainda estão sendo enviadas.
+- Se a OS concluir mas o chamado não atualizar, mostra o erro em vez de esconder o problema.
 
 Envio:
 1. Extraia o ZIP.
 2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua app/servicos/page.tsx.
+3. Substitua app/os/[id]/page.tsx.
 4. Faça Commit changes e aguarde a Vercel publicar.
