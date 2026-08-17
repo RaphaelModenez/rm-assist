@@ -1,13 +1,13 @@
-RM Assist - Patch PMOC, Relatórios e iPhone
+RM Assist - Novo cliente dentro do fluxo de Chamado
 
-Inclui:
-- Relatórios lendo do Supabase, com busca.
-- Módulo PMOC com contratos, periodicidade, próxima visita, valor e status ativo/inativo.
-- Manifest PWA ajustado para abrir em modo standalone no iPhone.
+O que muda:
+- Em Novo Chamado aparece o botão '+ Cadastrar novo cliente'.
+- Ao tocar, abre o cadastro de cliente.
+- Depois de salvar, o app volta automaticamente para Novo Chamado.
+- O cliente recém-criado já volta selecionado.
 
 Envio:
 1. Extraia o ZIP.
-2. No GitHub: Add file > Upload files.
-3. Envie a pasta app mantendo a estrutura.
-4. Confirme a substituição dos arquivos existentes.
-5. Faça Commit changes e aguarde a Vercel publicar.
+2. Envie a pasta app ao GitHub mantendo a estrutura.
+3. Confirme a substituição dos dois page.tsx.
+4. Faça Commit changes e aguarde a Vercel publicar.

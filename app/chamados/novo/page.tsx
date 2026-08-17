@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {FormEvent, Suspense, useEffect, useState} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import ClientPicker from "@/components/ClientPicker";
@@ -25,6 +26,13 @@ function NovoChamadoContent() {
   });
   const [locais,setLocais] = useState<any[]>([]);
   const [eqs,setEqs] = useState<any[]>([]);
+
+  useEffect(()=>{
+    const clienteDaUrl = sp.get("cliente") || "";
+    if (clienteDaUrl && clienteDaUrl !== f.cliente_id) {
+      setF(prev => ({...prev, cliente_id: clienteDaUrl, local_id:"", equipamento_id:""}));
+    }
+  },[sp]);
 
   useEffect(()=>{
     (async()=>{
@@ -67,7 +75,13 @@ function NovoChamadoContent() {
   return <div className="page">
     <header className="simple-header"><div><p className="eyebrow">NOVO CHAMADO</p><h1>Dados e agendamento</h1><p>Registre a solicitação e, se quiser, já agende.</p></div></header>
     <form className="form-card" onSubmit={save}>
-      <div className="field"><label>Cliente *</label><ClientPicker value={f.cliente_id} onChange={v=>setF({...f,cliente_id:v,local_id:"",equipamento_id:""})}/></div>
+      <div className="field">
+        <label>Cliente *</label>
+        <ClientPicker value={f.cliente_id} onChange={v=>setF({...f,cliente_id:v,local_id:"",equipamento_id:""})}/>
+        <div style={{marginTop:10}}>
+          <Link href="/clientes/novo?retorno=chamado" className="secondary-button">+ Cadastrar novo cliente</Link>
+        </div>
+      </div>
       <div className="field-grid">
         <div className="field"><label>Local</label><select value={f.local_id} onChange={e=>setF({...f,local_id:e.target.value})}><option value="">Selecione</option>{locais.map(x=><option key={x.id} value={x.id}>{x.nome}</option>)}</select></div>
         <div className="field"><label>Equipamento</label><select value={f.equipamento_id} onChange={e=>setF({...f,equipamento_id:e.target.value})}><option value="">Selecione</option>{eqs.map(x=><option key={x.id} value={x.id}>{x.ambiente} — {x.marca||"Sem marca"}</option>)}</select></div>
