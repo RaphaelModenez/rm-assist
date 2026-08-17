@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import {useEffect,useState} from "react";
+import {useEffect,useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
 import {getSupabase} from "@/lib/supabase";
 import {fmtData} from "@/lib/domain";
@@ -11,6 +11,7 @@ export default function Servicos(){
   const [ord,setOrd]=useState<any[]>([]);
   const [erro,setErro]=useState("");
   const [iniciando,setIniciando]=useState<string>("");
+  const [mostrarEncerrados,setMostrarEncerrados]=useState(false);
 
   async function load(){
     const s=getSupabase(); if(!s)return setErro("Supabase não configurado.");
@@ -23,6 +24,22 @@ export default function Servicos(){
   useEffect(()=>{load()},[]);
 
   function nome(x:any){return x.clientes?.nome_fantasia||x.clientes?.nome||"Cliente"}
+
+  const chamadosVisiveis=useMemo(
+    ()=>ch.filter((x:any)=>mostrarEncerrados||!["concluido","cancelado"].includes(x.status)),
+    [ch,mostrarEncerrados]
+  );
+
+  const osVisiveis=useMemo(
+    ()=>ord.filter((x:any)=>mostrarEncerrados||x.status!=="concluida"),
+    [ord,mostrarEncerrados]
+  );
+
+  const ativos=useMemo(
+    ()=>ch.filter((x:any)=>!["concluido","cancelado"].includes(x.status)).length+
+       ord.filter((x:any)=>x.status!=="concluida").length,
+    [ch,ord]
+  );
 
   async function iniciar(c:any){
     if(iniciando)return;
@@ -77,11 +94,44 @@ export default function Servicos(){
   }
 
   return <div className="page">
-    <header className="simple-header"><div><p className="eyebrow">RM ASSIST</p><h1>Serviços</h1><p>Chamados e ordens de serviço.</p></div><Link href="/chamados/novo" className="primary-button">+ Novo chamado</Link></header>
+    <header className="simple-header">
+      <div><p className="eyebrow">RM ASSIST</p><h1>Serviços</h1><p>Chamados e ordens de serviço.</p></div>
+      <Link href="/chamados/novo" className="primary-button">+ Novo chamado</Link>
+    </header>
+
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,marginBottom:14,flexWrap:"wrap"}}>
+      <span className="muted">{ativos} item{ativos===1?"":"s"} ativo{ativos===1?"":"s"}</span>
+      <button className="secondary-button" onClick={()=>setMostrarEncerrados(!mostrarEncerrados)}>
+        {mostrarEncerrados?"Ocultar encerrados":"Ver encerrados"}
+      </button>
+    </div>
+
     {erro&&<div className="error-box">{erro}</div>}
+
     <h3 className="form-section-title">Chamados</h3>
-    {ch.length===0?<p className="muted">Nenhum chamado.</p>:<div className="service-list">{ch.map(c=><article className="service-card" key={c.id}><div><span className={`status-chip ${c.status}`}>{String(c.status).replace("_"," ")}</span><h3>Chamado #{String(c.numero).padStart(4,"0")} — {nome(c)}</h3><p>{c.descricao}</p><small>{c.data_agendada?`${fmtData(c.data_agendada)} • ${c.hora_agendada?.slice(0,5)||""}`:"Sem agendamento"} • {c.prioridade}</small></div>{["aberto","agendado","em_atendimento"].includes(c.status)&&<button className="primary-button" disabled={!!iniciando} onClick={()=>iniciar(c)}>{iniciando===c.id?"Abrindo...":c.status==="em_atendimento"?"Abrir atendimento":"Iniciar atendimento"}</button>}</article>)}</div>}
+    {chamadosVisiveis.length===0?<p className="muted">{mostrarEncerrados?"Nenhum chamado.":"Nenhum chamado ativo."}</p>:
+    <div className="service-list">{chamadosVisiveis.map(c=><article className="service-card" key={c.id}>
+      <div>
+        <span className={`status-chip ${c.status}`}>{String(c.status).replace("_"," ")}</span>
+        <h3>Chamado #{String(c.numero).padStart(4,"0")} — {nome(c)}</h3>
+        <p>{c.descricao}</p>
+        <small>{c.data_agendada?`${fmtData(c.data_agendada)} • ${c.hora_agendada?.slice(0,5)||""}`:"Sem agendamento"} • {c.prioridade}</small>
+      </div>
+      {["aberto","agendado","em_atendimento"].includes(c.status)&&
+        <button className="primary-button" disabled={!!iniciando} onClick={()=>iniciar(c)}>
+          {iniciando===c.id?"Abrindo...":c.status==="em_atendimento"?"Abrir atendimento":"Iniciar atendimento"}
+        </button>}
+    </article>)}</div>}
+
     <h3 className="form-section-title">Ordens de serviço</h3>
-    {ord.length===0?<p className="muted">Nenhuma OS.</p>:<div className="service-list">{ord.map(o=><Link href={`/os/${o.id}`} className="service-card" key={o.id}><div><span className={`status-chip ${o.status}`}>{String(o.status).replace("_"," ")}</span><h3>OS #{String(o.numero).padStart(4,"0")} — {nome(o)}</h3><p>{o.tipo_servico||"Serviço"}</p></div><span className="chevron">›</span></Link>)}</div>}
+    {osVisiveis.length===0?<p className="muted">{mostrarEncerrados?"Nenhuma OS.":"Nenhuma OS ativa."}</p>:
+    <div className="service-list">{osVisiveis.map(o=><Link href={`/os/${o.id}`} className="service-card" key={o.id}>
+      <div>
+        <span className={`status-chip ${o.status}`}>{String(o.status).replace("_"," ")}</span>
+        <h3>OS #{String(o.numero).padStart(4,"0")} — {nome(o)}</h3>
+        <p>{o.tipo_servico||"Serviço"}</p>
+      </div>
+      <span className="chevron">›</span>
+    </Link>)}</div>}
   </div>
 }

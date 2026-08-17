@@ -1,14 +1,14 @@
-RM Assist - Painel para uso diário
+RM Assist - Serviços para uso diário
 
 Melhorias:
-- cartões do painel agora são atalhos clicáveis
-- próximos serviços abrem diretamente a OS quando o atendimento já foi iniciado
-- chamados ainda não iniciados levam para Serviços
-- alerta no painel quando há atendimentos agendados em atraso
-- status "em atendimento" fica mais legível no painel
+- chamados concluídos/cancelados ficam ocultos por padrão
+- OS concluídas ficam ocultas por padrão
+- botão "Ver encerrados" mostra o histórico sem sair da tela
+- contador de itens ativos no topo
+- mantém o fluxo seguro de abrir/reutilizar a OS existente
 
 Envio:
 1. Extraia o ZIP.
 2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua app/page.tsx.
+3. Substitua app/servicos/page.tsx.
 4. Faça Commit changes e aguarde GitHub Actions/Vercel.
