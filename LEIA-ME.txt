@@ -1,16 +1,17 @@
-RM Assist - Patch Fotos e Relatório
+RM Assist - Patch Painel e Histórico
 
 Inclui:
-- upload de fotos direto do iPhone/câmera para Supabase Storage
-- fotos do diagnóstico e execução
-- remoção de fotos
-- relatório final lendo os dados do Supabase
-- registro fotográfico no relatório
-- impressão/salvamento em PDF pelo navegador
+- tela inicial conectada ao Supabase
+- contadores reais de clientes, chamados, serviços do dia e OS em andamento
+- próximos serviços vindos da nuvem
+- histórico de ordens concluídas
+- busca por cliente, número da OS e equipamento
+- reabertura da OS e do relatório
+- atalho de Histórico no menu Mais
 
 Envio:
 1. Extraia este ZIP.
 2. No GitHub: Add file > Upload files.
 3. Envie a pasta app mantendo a estrutura.
-4. Confirme a substituição dos dois page.tsx existentes.
+4. Confirme a substituição de app/page.tsx e app/mais/page.tsx e a criação de app/historico/page.tsx.
 5. Faça Commit changes e aguarde a Vercel publicar.
