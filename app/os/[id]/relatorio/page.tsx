@@ -73,7 +73,7 @@ export default function Relatorio(){
 
       {d.mats.length>0&&<section><h2>Materiais / peças</h2><table><tbody>{d.mats.map((m:any)=><tr key={m.id}><td>{String(m.quantidade).replace(".",",")} × {m.descricao}</td><td>{moeda(m.valor_total)}</td></tr>)}</tbody><tfoot><tr><td><b>Total de materiais</b></td><td><b>{moeda(totalMateriais)}</b></td></tr></tfoot></table></section>}
 
-      {d.fotos.length>0&&<section><h2>Registro fotográfico</h2><div style={{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:12}}>{d.fotos.map((f:any)=><figure style={{margin:0}} key={f.id}><img style={{width:"100%",aspectRatio:"4 / 3",objectFit:"cover",borderRadius:10,border:"1px solid #ddd"}} src={fotoUrl(f.storage_path)} alt={f.legenda||"Foto do serviço"}/><figcaption style={{fontSize:12,color:"#666",marginTop:4}}>{f.tipo==="diagnostico"?"Diagnóstico":"Execução"}</figcaption></figure>)}</div></section>}
+      {d.fotos.length>0&&<section><h2>Registro fotográfico</h2><div style={{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:12}}>{d.fotos.map((f:any)=><figure style={{margin:0}} key={f.id}><img style={{width:"100%",aspectRatio:"4 / 3",objectFit:"cover",borderRadius:10,border:"1px solid #ddd"}} src={fotoUrl(f.storage_path)} alt={f.legenda||"Foto do serviço"}/><figcaption style={{fontSize:12,color:"#666",marginTop:4}}><b>{f.tipo==="diagnostico"?"Diagnóstico":"Execução"}</b>{f.legenda?<><br/>{f.legenda}</>:null}</figcaption></figure>)}</div></section>}
 
       <section><h2>Conclusão</h2><p><b>Situação:</b> {d.os.situacao_final||"—"}<br/><b>Recomendações:</b> {d.os.recomendacoes||"—"}<br/><b>Pendências:</b> {d.os.pendencias||"—"}</p></section>
 

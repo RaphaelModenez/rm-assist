@@ -1,18 +1,15 @@
-RM Assist - Correção do botão Salvar execução
+RM Assist - Legendas nas fotos
 
-O que foi alterado:
-- botão Salvar execução agora usa uma função dedicada
-- valida se existe descrição do serviço executado
-- salva e lê a OS novamente na mesma operação para confirmar que realmente gravou
-- mostra "Execução salva com sucesso" somente após confirmação do banco
-- remove o salvamento automático de Recomendações ao sair do campo, evitando duas atualizações simultâneas
-- bloqueia Salvar execução enquanto uma foto ainda está sendo enviada
-
-Observação:
-Nos logs do Supabase, a atualização da OS apareceu com resposta 204 (aceita pelo banco), então o problema parece estar no fluxo da tela e não na estrutura da tabela.
+Adiciona:
+- campo de texto abaixo de cada foto
+- exemplos de uso: Antes da limpeza, Durante a manutenção, Depois da higienização
+- botão Salvar legenda
+- legenda aparece também no relatório da OS
 
 Envio:
 1. Extraia o ZIP.
-2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua app/os/[id]/page.tsx.
-4. Faça Commit changes e aguarde GitHub Actions/Vercel.
+2. Envie a pasta app mantendo a estrutura.
+3. Substitua:
+   app/os/[id]/page.tsx
+   app/os/[id]/relatorio/page.tsx
+4. Faça Commit changes.
