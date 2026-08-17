@@ -27,26 +27,26 @@ export default function Detalhe(){
 
  return <div className="page">
   <header className="simple-header">
-   <div><p className="eyebrow">CLIENTE</p><h1>{c.nome_fantasia||c.nome}</h1><p>{c.nome_fantasia?c.nome:c.cpf_cnpj||"Cadastro do cliente"}</p></div>
+   <div><p className="eyebrow">CLIENTE</p><h1>{c.nome_fantasia||c.nome}</h1><p>{c.nome_fantasia?c.nome:c.cpf_cnpj||"Cadastro do cliente"}{!c.ativo?" • Inativo":""}</p></div>
    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
     <Link href={`/clientes/${id}/editar`} className="secondary-button">Editar</Link>
-    <Link href={`/chamados/novo?cliente=${id}`} className="primary-button">+ Chamado</Link>
+    {c.ativo&&<Link href={`/chamados/novo?cliente=${id}`} className="primary-button">+ Chamado</Link>}
    </div>
   </header>
 
   <section className="detail-grid">
    <article className="info-card"><h3>Contato</h3><p><b>Telefone:</b> {c.telefone||"—"}</p><p><b>WhatsApp:</b> {c.whatsapp||"—"}</p><p><b>E-mail:</b> {c.email||"—"}</p></article>
-   <article className="info-card"><h3>Resumo</h3><p><b>Locais:</b> {locais.length}</p><p><b>Equipamentos:</b> {eqs.length}</p><p><b>Status:</b> {c.ativo?"Ativo":"Inativo"}</p></article>
+   <article className="info-card"><h3>Resumo</h3><p><b>Locais:</b> {locais.length}</p><p><b>Equipamentos ativos:</b> {eqs.filter((x:any)=>x.ativo).length}</p><p><b>Status:</b> {c.ativo?"Ativo":"Inativo"}</p></article>
   </section>
 
   <section className="section-block">
-   <div className="section-heading"><h3>Locais</h3><Link href={`/clientes/${id}/locais/novo`}>+ Adicionar</Link></div>
+   <div className="section-heading"><h3>Locais</h3>{c.ativo&&<Link href={`/clientes/${id}/locais/novo`}>+ Adicionar</Link>}</div>
    {locais.length?<div className="mini-list">{locais.map(x=><div className="mini-card" key={x.id}><div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center"}}><div><strong>{x.nome}</strong><span>{[x.endereco,x.numero,x.cidade].filter(Boolean).join(", ")}</span></div><Link href={`/clientes/${id}/locais/${x.id}/editar`} className="secondary-button">Editar</Link></div></div>)}</div>:<p className="muted">Nenhum local.</p>}
   </section>
 
   <section className="section-block">
-   <div className="section-heading"><h3>Equipamentos</h3><Link href={`/clientes/${id}/equipamentos/novo`}>+ Adicionar</Link></div>
-   {eqs.length?<div className="mini-list">{eqs.map(x=><div className="mini-card" key={x.id}><div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center"}}><div><strong>{x.ambiente||x.tipo}</strong><span>{[x.marca,x.modelo,x.capacidade_btu?x.capacidade_btu+" BTU":null,x.refrigerante].filter(Boolean).join(" • ")}</span></div><Link href={`/clientes/${id}/equipamentos/${x.id}/editar`} className="secondary-button">Editar</Link></div></div>)}</div>:<p className="muted">Nenhum equipamento.</p>}
+   <div className="section-heading"><h3>Equipamentos</h3>{c.ativo&&<Link href={`/clientes/${id}/equipamentos/novo`}>+ Adicionar</Link>}</div>
+   {eqs.length?<div className="mini-list">{eqs.map(x=><div className="mini-card" key={x.id}><div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center"}}><div><strong>{x.ambiente||x.tipo}{!x.ativo?" • Inativo":""}</strong><span>{[x.marca,x.modelo,x.capacidade_btu?x.capacidade_btu+" BTU":null,x.refrigerante].filter(Boolean).join(" • ")}</span></div><Link href={`/clientes/${id}/equipamentos/${x.id}/editar`} className="secondary-button">Editar</Link></div></div>)}</div>:<p className="muted">Nenhum equipamento.</p>}
   </section>
  </div>
 }

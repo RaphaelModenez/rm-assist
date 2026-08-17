@@ -1,16 +1,17 @@
-RM Assist - Revisão Financeiro, Agenda e Navegação
+RM Assist - Revisão de ativos e inativos
 
 Inclui:
-- Financeiro separa OS com valor de OS sem valor.
-- Totais financeiros somam apenas OS com valor informado.
-- Financeiro exibe data e hora da conclusão.
-- Agenda abre diretamente a OS quando o atendimento já estiver em andamento.
-- Agenda sinaliza atendimentos em andamento.
-- Menu inferior marca Serviços como ativo também em Chamados e OS.
-- Menu Mais permanece ativo em Histórico, Equipamentos, Relatórios, Orçamentos, Financeiro e PMOC.
+- lista de clientes mostra apenas ativos por padrão
+- botão para visualizar clientes inativos
+- lista de equipamentos mostra apenas equipamentos de clientes ativos e equipamentos ativos por padrão
+- botão para visualizar equipamentos inativos
+- ficha do cliente identifica status inativo
+- cliente inativo não exibe botão de novo chamado
+- cliente inativo não permite adicionar novos locais/equipamentos pela ficha
+- equipamentos inativos ficam claramente identificados
 
 Envio:
 1. Extraia o ZIP.
-2. Envie as pastas app e components ao GitHub mantendo a estrutura.
-3. Substitua app/financeiro/page.tsx, app/agenda/page.tsx e components/BottomNav.tsx.
+2. Envie a pasta app ao GitHub mantendo a estrutura.
+3. Substitua os três page.tsx.
 4. Faça Commit changes e aguarde a Vercel publicar.
