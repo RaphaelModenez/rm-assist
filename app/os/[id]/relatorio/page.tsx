@@ -8,6 +8,7 @@ export default function Relatorio(){
   const {id}=useParams<{id:string}>();
   const [d,setD]=useState<any>({});
   const [erro,setErro]=useState("");
+  const [fotoUrls,setFotoUrls]=useState<Record<string,string>>({});
 
   useEffect(()=>{(async()=>{
     const s=getSupabase(); if(!s)return setErro("Supabase não configurado.");
@@ -23,9 +24,15 @@ export default function Relatorio(){
       s.from("fotos_servico").select("*").eq("ordem_servico_id",id).order("created_at")
     ]);
     setD({os,cliente,local,eq,check:check||[],med,mats:mats||[],fotos:fotos||[]});
+    const urls:Record<string,string>={};
+    await Promise.all((fotos||[]).map(async(f:any)=>{
+      const {data}=await s.storage.from("fotos-servico").createSignedUrl(f.storage_path,3600);
+      if(data?.signedUrl)urls[f.storage_path]=data.signedUrl;
+    }));
+    setFotoUrls(urls);
   })()},[id]);
 
-  function fotoUrl(path:string){const s=getSupabase();return s?s.storage.from("fotos-servico").getPublicUrl(path).data.publicUrl:""}
+  function fotoUrl(path:string){return fotoUrls[path]||""}
   function statusChecklist(v:string){
     if(v==="conforme")return "Conforme";
     if(v==="nao_conforme")return "Não conforme";

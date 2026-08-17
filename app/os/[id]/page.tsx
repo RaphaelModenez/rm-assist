@@ -26,6 +26,7 @@ export default function OSPage(){
   const [salvando,setSalvando]=useState(false);
   const [enviandoFoto,setEnviandoFoto]=useState(false);
   const [salvo,setSalvo]=useState("");
+  const [fotoUrls,setFotoUrls]=useState<Record<string,string>>({});
 
   useEffect(()=>{(async()=>{
     const s=getSupabase(); if(!s)return setErro("Supabase não configurado.");
@@ -43,6 +44,12 @@ export default function OSPage(){
     setCliente(c); setEq(e);
     setCheck((ck&&ck.length)?ck:CHECKLIST_PREVENTIVA.map(([categoria,item])=>({id:crypto.randomUUID(),ordem_servico_id:id,categoria,item,status:"",observacao:""})));
     if(mm)setMed(mm); setMats(ma||[]); setFotos(fo||[]);
+    const urls:Record<string,string>={};
+    await Promise.all((fo||[]).map(async(f:any)=>{
+      const {data}=await s.storage.from("fotos-servico").createSignedUrl(f.storage_path,3600);
+      if(data?.signedUrl)urls[f.storage_path]=data.signedUrl;
+    }));
+    setFotoUrls(urls);
   })()},[id]);
 
   const delta=useMemo(()=>{
@@ -76,10 +83,11 @@ export default function OSPage(){
         const path=`${id}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
         const {error:upErr}=await s.storage.from("fotos-servico").upload(path,file,{cacheControl:"3600",upsert:false});
         if(upErr)throw upErr;
-        const {data:urlData}=s.storage.from("fotos-servico").getPublicUrl(path);
         const {data:row,error:dbErr}=await s.from("fotos_servico").insert({ordem_servico_id:id,storage_path:path,legenda:file.name,tipo}).select("*").single();
         if(dbErr)throw dbErr;
-        novas.push({...row,public_url:urlData.publicUrl});
+        const {data:signed}=await s.storage.from("fotos-servico").createSignedUrl(path,3600);
+        if(signed?.signedUrl)setFotoUrls(prev=>({...prev,[path]:signed.signedUrl}));
+        novas.push(row);
       }
       setFotos([...novas,...fotos]);
     }catch(e:any){setErro(e.message||"Erro ao enviar foto.")}
@@ -96,8 +104,7 @@ export default function OSPage(){
   }
 
   function fotoUrl(f:any){
-    const s=getSupabase(); if(!s)return "";
-    return s.storage.from("fotos-servico").getPublicUrl(f.storage_path).data.publicUrl;
+    return fotoUrls[f.storage_path]||"";
   }
 
   async function saveChecklist(){

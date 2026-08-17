@@ -1,18 +1,21 @@
-RM Assist - Acesso protegido | Etapa 1
+RM Assist - Acesso protegido | Etapa 2
 
-Inclui:
-- tela de login por e-mail e senha antes do aplicativo
-- criação do primeiro acesso
-- sessão persistente no iPhone
-- botão "Sair do RM Assist" no menu Mais
-- o conteúdo e a navegação ficam ocultos enquanto não houver sessão autenticada
+O banco de dados já foi protegido no Supabase para aceitar somente usuários autenticados.
 
-IMPORTANTE:
-Esta é a Etapa 1. Depois de criar seu acesso e confirmar que o login funciona, faremos a Etapa 2 no Supabase: remover o acesso anônimo ao banco e bloquear novos cadastros. Assim evitamos que você fique trancado para fora do aplicativo.
+Este patch:
+- remove o botão de criar nova conta da tela de login
+- mantém apenas e-mail + senha + Entrar
+- prepara as fotos da OS e do relatório para bucket privado usando URLs temporárias assinadas
 
 Envio:
 1. Extraia o ZIP.
 2. Envie as pastas app e components ao GitHub mantendo a estrutura.
-3. Faça Commit changes.
-4. Aguarde Vercel e GitHub Actions concluírem.
-5. Abra o RM Assist e toque em "Primeiro acesso? Criar conta".
+3. Substitua:
+   - components/AuthGate.tsx
+   - app/os/[id]/page.tsx
+   - app/os/[id]/relatorio/page.tsx
+4. Faça Commit changes.
+5. Aguarde GitHub Actions e Vercel.
+
+Depois diga: "patch segurança enviado".
+Aí o bucket de fotos será mudado de público para privado no Supabase.
