@@ -1,0 +1,18 @@
+/* Ajustes de usabilidade para iPhone e telas pequenas */
+html { -webkit-text-size-adjust: 100%; }
+body { min-height: 100dvh; overscroll-behavior-y: none; }
+button, a, select, input, textarea { -webkit-tap-highlight-color: transparent; }
+button, .primary-button, .secondary-button, .menu-item, .nav-item { min-height: 44px; }
+button:disabled, .primary-button:disabled { opacity: .55; cursor: not-allowed; }
+input, textarea, select { max-width: 100%; }
+.service-card, .client-card, .agenda-card, .timeline-item, .mini-card { overflow-wrap: anywhere; }
+@media (max-width: 520px) {
+  input, textarea, select { font-size: 16px !important; }
+  .page { padding-left: 14px; padding-right: 14px; }
+  .simple-header { flex-wrap: wrap; }
+  .simple-header .primary-button { min-width: 44px; }
+  .service-card { flex-direction: column; width: 100%; }
+  .service-card > div { width: 100%; }
+  .form-actions button { width: 100%; }
+  .timeline-item { align-items: start; }
+}

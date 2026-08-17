@@ -1,13 +1,14 @@
-RM Assist - Revisão geral
+RM Assist - Acabamento para iPhone
 
-Ajustes:
-- Corrige o cálculo de 'hoje' usando a data local do iPhone, evitando diferença por fuso horário.
-- Painel mostra apenas clientes ativos e próximos serviços futuros.
-- Agenda esconde por padrão serviços passados, concluídos e cancelados, com botão para ver passados.
-- Seletor de cliente ganhou estado de carregamento, mensagem de lista vazia e tratamento de erro.
+Inclui:
+- campos com 16px no iPhone para evitar zoom automático ao tocar
+- alvos de toque de no mínimo 44px
+- melhor quebra de textos longos
+- cartões e botões mais adaptados a telas pequenas
+- pequenos ajustes de comportamento de rolagem e toque
 
 Envio:
 1. Extraia o ZIP.
-2. Envie as pastas app e components ao GitHub mantendo a estrutura.
-3. Confirme a substituição dos três arquivos.
+2. Envie a pasta app ao GitHub mantendo a estrutura.
+3. Confirme a substituição de app/layout.tsx e a criação de app/iphone.css.
 4. Faça Commit changes e aguarde a Vercel publicar.
