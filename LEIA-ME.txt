@@ -1,14 +1,13 @@
-RM Assist - Patch Equipamentos, Financeiro e Orçamentos
+RM Assist - Patch PMOC, Relatórios e iPhone
 
 Inclui:
-- Equipamentos lendo do Supabase e busca por cliente, ambiente, marca, modelo, série ou patrimônio.
-- Financeiro lendo OS concluídas, total geral e total do mês.
-- Orçamentos salvos no Supabase, com validade, observações e alteração de status.
-- Indicadores de orçamentos enviados/aprovados e valor aprovado.
+- Relatórios lendo do Supabase, com busca.
+- Módulo PMOC com contratos, periodicidade, próxima visita, valor e status ativo/inativo.
+- Manifest PWA ajustado para abrir em modo standalone no iPhone.
 
 Envio:
 1. Extraia o ZIP.
 2. No GitHub: Add file > Upload files.
 3. Envie a pasta app mantendo a estrutura.
-4. Confirme a substituição dos três page.tsx.
+4. Confirme a substituição dos arquivos existentes.
 5. Faça Commit changes e aguarde a Vercel publicar.
