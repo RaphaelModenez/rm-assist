@@ -1,22 +1,27 @@
-RM Assist - Acabamento Agenda e Histórico
+RM Assist - Correção de duplicidade e exclusão segura
 
-Agenda:
-- mostra quantidade de atendimentos hoje
-- mostra quantidade de atrasados
-- identifica claramente itens atrasados
-- botão informa quantos atrasados existem
-- mantém abertura direta da OS quando já iniciada
+Corrige o problema observado ao salvar local:
+- trava imediata contra múltiplos envios
+- botão mostra "Salvando..." e fica desativado
+- antes de inserir, verifica se o mesmo local já existe para o cliente
 
-Histórico:
-- filtro por todo o histórico, este mês ou este ano
-- busca por cliente, OS, serviço e equipamento
-- mostra quantidade de OS no filtro
-- mostra total de valores de serviço do período filtrado
+Exclusão:
+- adiciona botão Apagar em cada local
+- local só é apagado se não estiver ligado a equipamento, chamado ou OS
+- adiciona botão Apagar cliente
+- cliente só é apagado quando não possui nenhum registro dependente
+- clientes com histórico devem ser mantidos como Inativos para preservar dados
+
+Para os 7 locais duplicados:
+- abra o cliente
+- mantenha um local correto
+- use Apagar nos demais
+- como os duplicados acabaram de ser criados e provavelmente não têm vínculos, devem ser removidos normalmente
 
 Envio:
 1. Extraia o ZIP.
 2. Envie a pasta app ao GitHub mantendo a estrutura.
 3. Substitua:
-   - app/agenda/page.tsx
-   - app/historico/page.tsx
+   app/clientes/[id]/locais/novo/page.tsx
+   app/clientes/[id]/page.tsx
 4. Faça Commit changes e aguarde GitHub Actions/Vercel.
