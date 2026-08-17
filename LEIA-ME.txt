@@ -1,17 +1,18 @@
-RM Assist - Revisão de ativos e inativos
+RM Assist - Acesso protegido | Etapa 1
 
 Inclui:
-- lista de clientes mostra apenas ativos por padrão
-- botão para visualizar clientes inativos
-- lista de equipamentos mostra apenas equipamentos de clientes ativos e equipamentos ativos por padrão
-- botão para visualizar equipamentos inativos
-- ficha do cliente identifica status inativo
-- cliente inativo não exibe botão de novo chamado
-- cliente inativo não permite adicionar novos locais/equipamentos pela ficha
-- equipamentos inativos ficam claramente identificados
+- tela de login por e-mail e senha antes do aplicativo
+- criação do primeiro acesso
+- sessão persistente no iPhone
+- botão "Sair do RM Assist" no menu Mais
+- o conteúdo e a navegação ficam ocultos enquanto não houver sessão autenticada
+
+IMPORTANTE:
+Esta é a Etapa 1. Depois de criar seu acesso e confirmar que o login funciona, faremos a Etapa 2 no Supabase: remover o acesso anônimo ao banco e bloquear novos cadastros. Assim evitamos que você fique trancado para fora do aplicativo.
 
 Envio:
 1. Extraia o ZIP.
-2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Substitua os três page.tsx.
-4. Faça Commit changes e aguarde a Vercel publicar.
+2. Envie as pastas app e components ao GitHub mantendo a estrutura.
+3. Faça Commit changes.
+4. Aguarde Vercel e GitHub Actions concluírem.
+5. Abra o RM Assist e toque em "Primeiro acesso? Criar conta".
