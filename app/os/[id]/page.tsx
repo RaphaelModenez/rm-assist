@@ -5,6 +5,11 @@ import {CHECKLIST_PREVENTIVA,moeda} from "@/lib/domain";
 import {getSupabase} from "@/lib/supabase";
 
 export default function OSPage(){
+  function numBR(v:any){
+    if(v===null||v===undefined||v==="")return null;
+    const n=Number(String(v).trim().replace(",","."));
+    return Number.isFinite(n)?n:null;
+  }
   const {id}=useParams<{id:string}>();
   const r=useRouter();
   const [os,setOs]=useState<any>();
@@ -40,7 +45,10 @@ export default function OSPage(){
     if(mm)setMed(mm); setMats(ma||[]); setFotos(fo||[]);
   })()},[id]);
 
-  const delta=useMemo(()=>med.retorno!==""&&med.insuflamento!==""?(Number(med.retorno)-Number(med.insuflamento)).toFixed(1):"—",[med.retorno,med.insuflamento]);
+  const delta=useMemo(()=>{
+    const ret=numBR(med.retorno), ins=numBR(med.insuflamento);
+    return ret!==null&&ins!==null?(ret-ins).toFixed(1):"—";
+  },[med.retorno,med.insuflamento]);
   if(erro)return <div className="page"><div className="error-box">{erro}</div></div>;
   if(!os)return <div className="page">Carregando OS...</div>;
 
@@ -103,7 +111,7 @@ export default function OSPage(){
 
   async function saveMed(){
     const s=getSupabase(); if(!s)return;
-    const payload={ordem_servico_id:id,retorno:med.retorno===""?null:Number(med.retorno),insuflamento:med.insuflamento===""?null:Number(med.insuflamento),tensao:med.tensao===""?null:Number(med.tensao),corrente:med.corrente===""?null:Number(med.corrente),pressao_succao:med.pressao_succao===""?null:Number(med.pressao_succao),pressao_descarga:med.pressao_descarga===""?null:Number(med.pressao_descarga),superaquecimento:med.superaquecimento===""?null:Number(med.superaquecimento),subresfriamento:med.subresfriamento===""?null:Number(med.subresfriamento),delta_t:delta==="—"?null:Number(delta),observacoes:med.observacoes||null,updated_at:new Date().toISOString()};
+    const payload={ordem_servico_id:id,retorno:numBR(med.retorno),insuflamento:numBR(med.insuflamento),tensao:numBR(med.tensao),corrente:numBR(med.corrente),pressao_succao:numBR(med.pressao_succao),pressao_descarga:numBR(med.pressao_descarga),superaquecimento:numBR(med.superaquecimento),subresfriamento:numBR(med.subresfriamento),delta_t:delta==="—"?null:numBR(delta),observacoes:med.observacoes||null,updated_at:new Date().toISOString()};
     const {data,error}=med.id?await s.from("medicoes").update(payload).eq("id",med.id).select("*").single():await s.from("medicoes").insert(payload).select("*").single();
     if(error)setErro(error.message); else {if(data)setMed(data);setSalvo("Medições salvas");setTimeout(()=>setSalvo(""),1800)}
   }
@@ -111,7 +119,8 @@ export default function OSPage(){
   async function addMat(){
     if(!material.descricao)return;
     const s=getSupabase(); if(!s)return;
-    const q=Number(material.quantidade||1), vu=Number(material.valor_unitario||0);
+    const q=numBR(material.quantidade)||1, vu=numBR(material.valor_unitario)||0;
+    if(q<=0)return setErro("Informe uma quantidade válida.");
     const {data,error}=await s.from("materiais_servico").insert({ordem_servico_id:id,descricao:material.descricao,quantidade:q,valor_unitario:vu,valor_total:q*vu}).select("*").single();
     if(error)return setErro(error.message);
     setMats([data,...mats]); setMaterial({descricao:"",quantidade:"1",valor_unitario:""});
@@ -119,6 +128,11 @@ export default function OSPage(){
 
   async function finalizar(){
     if(salvando||enviandoFoto)return;
+    if(!os.situacao_final)return setErro("Informe a situação final do equipamento antes de concluir a OS.");
+    const valor=numBR(os.valor_servico);
+    if(os.valor_servico!=="" && os.valor_servico!==null && os.valor_servico!==undefined && valor===null){
+      return setErro("Informe um valor de serviço válido. Você pode usar vírgula, por exemplo: 150,00.");
+    }
     const s=getSupabase(); if(!s)return;
     setSalvando(true); setErro(""); setSalvo("");
     const fechamento={
@@ -127,7 +141,7 @@ export default function OSPage(){
       recomendacoes:os.recomendacoes||null,
       situacao_final:os.situacao_final||null,
       pendencias:os.pendencias||null,
-      valor_servico:Number(os.valor_servico||0),
+      valor_servico:valor||0,
       forma_pagamento:os.forma_pagamento||null,
       responsavel_cliente:assinatura||null,
       status:"concluida",
@@ -157,6 +171,6 @@ export default function OSPage(){
 
     {tab==="execucao"&&<section className="form-card"><h3>Execução do serviço</h3><div className="field"><label>Serviço executado</label><textarea rows={6} value={os.servico_executado||""} onChange={e=>setOs({...os,servico_executado:e.target.value})}/></div><button type="button" className="secondary-button" disabled={salvando} onClick={()=>patchOS({servico_executado:os.servico_executado||null,recomendacoes:os.recomendacoes||null})}>{salvando?"Salvando...":"Salvar execução"}</button><h3 className="form-section-title">Materiais / peças</h3><div className="field-grid"><div className="field"><label>Descrição</label><input value={material.descricao} onChange={e=>setMaterial({...material,descricao:e.target.value})}/></div><div className="field"><label>Quantidade</label><input type="number" value={material.quantidade} onChange={e=>setMaterial({...material,quantidade:e.target.value})}/></div></div><div className="field"><label>Valor unitário</label><input inputMode="decimal" value={material.valor_unitario} onChange={e=>setMaterial({...material,valor_unitario:e.target.value})}/></div><button type="button" className="secondary-button" onClick={addMat}>+ Adicionar material</button>{mats.map(m=><div className="material-line" key={m.id}><span>{m.quantidade} × {m.descricao}</span><strong>{moeda(m.valor_total)}</strong></div>)}<div className="field"><label>Recomendações</label><textarea rows={3} value={os.recomendacoes||""} onChange={e=>setOs({...os,recomendacoes:e.target.value})} onBlur={()=>patchOS({recomendacoes:os.recomendacoes||null})}/></div><div className="photo-input"><label>Fotos antes / durante / depois</label><input type="file" accept="image/*" capture="environment" multiple onChange={e=>uploadFotos(e.target.files,"execucao")}/>{enviandoFoto&&<small>Enviando foto...</small>}</div>{fotos.filter(f=>f.tipo==="execucao").length>0&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))",gap:12,marginTop:14}}>{fotos.filter(f=>f.tipo==="execucao").map(f=><div style={{display:"flex",flexDirection:"column",gap:8}} key={f.id}><img style={{width:"100%",aspectRatio:"4 / 3",objectFit:"cover",borderRadius:14,border:"1px solid #e5e7eb"}} src={fotoUrl(f)} alt={f.legenda||"Foto"}/><button type="button" className="secondary-button" onClick={()=>removerFoto(f)}>Remover</button></div>)}</div>}</section>}
 
-    {tab==="conclusao"&&<section className="form-card"><h3>Conclusão</h3><div className="field"><label>Situação final do equipamento</label><select value={os.situacao_final||""} onChange={e=>{setOs({...os,situacao_final:e.target.value});patchOS({situacao_final:e.target.value})}}><option value="">Selecione</option><option>Operando normalmente</option><option>Operando com ressalvas</option><option>Equipamento parado</option><option>Aguardando peça / retorno</option></select></div><div className="field"><label>Pendências</label><textarea rows={3} value={os.pendencias||""} onChange={e=>setOs({...os,pendencias:e.target.value})} onBlur={()=>patchOS({pendencias:os.pendencias||null})}/></div><div className="field-grid"><div className="field"><label>Valor do serviço (R$)</label><input inputMode="decimal" value={os.valor_servico??""} onChange={e=>setOs({...os,valor_servico:e.target.value})} onBlur={()=>patchOS({valor_servico:Number(os.valor_servico||0)})}/></div><div className="field"><label>Forma de pagamento</label><select value={os.forma_pagamento||""} onChange={e=>{setOs({...os,forma_pagamento:e.target.value});patchOS({forma_pagamento:e.target.value||null})}}><option value="">Selecione</option><option>PIX</option><option>Dinheiro</option><option>Cartão</option><option>Boleto</option><option>Faturado</option></select></div></div><div className="field"><label>Responsável pelo cliente / aceite</label><input value={assinatura} onChange={e=>setAssinatura(e.target.value)} placeholder="Nome de quem acompanhou o serviço"/></div><button className="primary-button full-button" disabled={salvando||enviandoFoto} onClick={finalizar}>{salvando?"Finalizando...":enviandoFoto?"Aguarde o envio das fotos...":"Finalizar OS e gerar relatório"}</button></section>}
+    {tab==="conclusao"&&<section className="form-card"><h3>Conclusão</h3><div className="field"><label>Situação final do equipamento</label><select value={os.situacao_final||""} onChange={e=>{setOs({...os,situacao_final:e.target.value});patchOS({situacao_final:e.target.value})}}><option value="">Selecione</option><option>Operando normalmente</option><option>Operando com ressalvas</option><option>Equipamento parado</option><option>Aguardando peça / retorno</option></select></div><div className="field"><label>Pendências</label><textarea rows={3} value={os.pendencias||""} onChange={e=>setOs({...os,pendencias:e.target.value})} onBlur={()=>patchOS({pendencias:os.pendencias||null})}/></div><div className="field-grid"><div className="field"><label>Valor do serviço (R$)</label><input inputMode="decimal" value={os.valor_servico??""} onChange={e=>setOs({...os,valor_servico:e.target.value})} onBlur={()=>{const v=numBR(os.valor_servico);if(v!==null||os.valor_servico==="")patchOS({valor_servico:v||0})}}/></div><div className="field"><label>Forma de pagamento</label><select value={os.forma_pagamento||""} onChange={e=>{setOs({...os,forma_pagamento:e.target.value});patchOS({forma_pagamento:e.target.value||null})}}><option value="">Selecione</option><option>PIX</option><option>Dinheiro</option><option>Cartão</option><option>Boleto</option><option>Faturado</option></select></div></div><div className="field"><label>Responsável pelo cliente / aceite</label><input value={assinatura} onChange={e=>setAssinatura(e.target.value)} placeholder="Nome de quem acompanhou o serviço"/></div><button className="primary-button full-button" disabled={salvando||enviandoFoto} onClick={finalizar}>{salvando?"Finalizando...":enviandoFoto?"Aguarde o envio das fotos...":"Finalizar OS e gerar relatório"}</button></section>}
   </div>
 }

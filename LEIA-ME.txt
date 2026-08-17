@@ -1,12 +1,11 @@
-RM Assist - Salvamento seguro da OS
+RM Assist - Números brasileiros e validação da OS
 
 Ajustes:
-- Botão explícito para salvar diagnóstico.
-- Botão explícito para salvar execução.
-- Mensagem visual quando checklist, medições ou campos principais são salvos.
-- Ao finalizar, o app grava novamente diagnóstico, execução, recomendações, conclusão e financeiro antes de concluir.
-- Não permite finalizar enquanto fotos ainda estão sendo enviadas.
-- Se a OS concluir mas o chamado não atualizar, mostra o erro em vez de esconder o problema.
+- Aceita vírgula decimal em medições (ex.: 7,5 A; 12,3 °C).
+- Aceita vírgula decimal em valores de materiais e valor do serviço.
+- Corrige o cálculo de ΔT quando os valores são digitados com vírgula.
+- Impede finalizar a OS sem informar a situação final do equipamento.
+- Mostra mensagem clara se o valor do serviço for inválido.
 
 Envio:
 1. Extraia o ZIP.
