@@ -5,6 +5,14 @@ import {useEffect,useMemo,useState} from "react";
 import {getSupabase} from "@/lib/supabase";
 import {fmtData} from "@/lib/domain";
 
+function dataLocalISO(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
 export default function Home(){
   const [s,setS]=useState({hoje:0,abertos:0,andamento:0,clientes:0,concluidos:0});
   const [agenda,setAgenda]=useState<any[]>([]);
@@ -14,22 +22,22 @@ export default function Home(){
   useEffect(()=>{(async()=>{
     const sb=getSupabase();
     if(!sb){setErro("Supabase não configurado.");setLoading(false);return}
-    const hoje=new Date().toISOString().slice(0,10);
+    const hoje=dataLocalISO();
     const [{data:ch,error:e1},{data:os,error:e2},{count:clientes,error:e3}] = await Promise.all([
       sb.from("chamados").select("*, clientes(nome,nome_fantasia)").order("data_agendada",{ascending:true}).order("hora_agendada",{ascending:true}),
       sb.from("ordens_servico").select("id,status,data_fim"),
-      sb.from("clientes").select("*",{count:"exact",head:true})
+      sb.from("clientes").select("*",{count:"exact",head:true}).eq("ativo",true)
     ]);
     if(e1||e2||e3)setErro(e1?.message||e2?.message||e3?.message||"");
     const chamados=ch||[], ordens=os||[];
     setS({
-      hoje:chamados.filter((x:any)=>x.data_agendada===hoje && x.status!=="concluido").length,
+      hoje:chamados.filter((x:any)=>x.data_agendada===hoje && !["concluido","cancelado"].includes(x.status)).length,
       abertos:chamados.filter((x:any)=>["aberto","agendado"].includes(x.status)).length,
       andamento:ordens.filter((x:any)=>x.status==="em_atendimento").length,
       clientes:clientes||0,
       concluidos:ordens.filter((x:any)=>x.status==="concluida").length
     });
-    setAgenda(chamados.filter((x:any)=>x.data_agendada && !["concluido","cancelado"].includes(x.status)).slice(0,4));
+    setAgenda(chamados.filter((x:any)=>x.data_agendada && x.data_agendada>=hoje && !["concluido","cancelado"].includes(x.status)).slice(0,4));
     setLoading(false);
   })()},[]);
 
@@ -47,7 +55,7 @@ export default function Home(){
     {erro&&<div className="error-box">{erro}</div>}
     {loading?<p className="muted">Atualizando painel...</p>:<>
       <div className="stat-grid">
-        {[[s.hoje,"Serviços hoje"],[s.abertos,"Chamados abertos"],[s.andamento,"OS em andamento"],[s.clientes,"Clientes"]].map(([v,l])=><article className="stat-card" key={String(l)}><strong>{v}</strong><span>{l}</span></article>)}
+        {[[s.hoje,"Serviços hoje"],[s.abertos,"Chamados abertos"],[s.andamento,"OS em andamento"],[s.clientes,"Clientes ativos"]].map(([v,l])=><article className="stat-card" key={String(l)}><strong>{v}</strong><span>{l}</span></article>)}
       </div>
 
       <div className="section-heading"><h3>Próximos serviços</h3><Link href="/agenda">Ver agenda</Link></div>

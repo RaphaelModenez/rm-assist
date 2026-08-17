@@ -1,13 +1,13 @@
-RM Assist - Novo cliente dentro do fluxo de Chamado
+RM Assist - Revisão geral
 
-O que muda:
-- Em Novo Chamado aparece o botão '+ Cadastrar novo cliente'.
-- Ao tocar, abre o cadastro de cliente.
-- Depois de salvar, o app volta automaticamente para Novo Chamado.
-- O cliente recém-criado já volta selecionado.
+Ajustes:
+- Corrige o cálculo de 'hoje' usando a data local do iPhone, evitando diferença por fuso horário.
+- Painel mostra apenas clientes ativos e próximos serviços futuros.
+- Agenda esconde por padrão serviços passados, concluídos e cancelados, com botão para ver passados.
+- Seletor de cliente ganhou estado de carregamento, mensagem de lista vazia e tratamento de erro.
 
 Envio:
 1. Extraia o ZIP.
-2. Envie a pasta app ao GitHub mantendo a estrutura.
-3. Confirme a substituição dos dois page.tsx.
+2. Envie as pastas app e components ao GitHub mantendo a estrutura.
+3. Confirme a substituição dos três arquivos.
 4. Faça Commit changes e aguarde a Vercel publicar.
