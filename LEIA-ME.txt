@@ -1,17 +1,14 @@
-RM Assist - Patch Painel e Histórico
+RM Assist - Patch Equipamentos, Financeiro e Orçamentos
 
 Inclui:
-- tela inicial conectada ao Supabase
-- contadores reais de clientes, chamados, serviços do dia e OS em andamento
-- próximos serviços vindos da nuvem
-- histórico de ordens concluídas
-- busca por cliente, número da OS e equipamento
-- reabertura da OS e do relatório
-- atalho de Histórico no menu Mais
+- Equipamentos lendo do Supabase e busca por cliente, ambiente, marca, modelo, série ou patrimônio.
+- Financeiro lendo OS concluídas, total geral e total do mês.
+- Orçamentos salvos no Supabase, com validade, observações e alteração de status.
+- Indicadores de orçamentos enviados/aprovados e valor aprovado.
 
 Envio:
-1. Extraia este ZIP.
+1. Extraia o ZIP.
 2. No GitHub: Add file > Upload files.
 3. Envie a pasta app mantendo a estrutura.
-4. Confirme a substituição de app/page.tsx e app/mais/page.tsx e a criação de app/historico/page.tsx.
+4. Confirme a substituição dos três page.tsx.
 5. Faça Commit changes e aguarde a Vercel publicar.
