@@ -1,18 +1,12 @@
-RM Assist - Cancelar chamado
+RM Assist - Bloqueio de conclusão incompleta
 
-Adiciona a opção "Cancelar chamado" em:
-- Serviços
-- Agenda
+Melhoria:
+- em OS com vários equipamentos, o app valida todos antes de concluir
+- cada equipamento precisa ter "Situação final" preenchida
+- se algum estiver faltando, a OS não é concluída
+- a mensagem informa quantos equipamentos faltam e tenta mostrar os ambientes
+- na aba Conclusão aparece um aviso com botão "Revisar equipamentos"
+- OS de um único equipamento continuam funcionando como antes
 
-Comportamento:
-- o chamado NÃO é apagado
-- ele passa para status "cancelado"
-- cliente, local e equipamentos permanecem intactos
-- chamados cancelados deixam de aparecer nas listas ativas
-- continuam acessíveis em "Ver encerrados"
-- se o atendimento já tiver sido iniciado, o app pede para cancelar primeiro a OS/início do atendimento
-
-Arquivos:
-components/CancelarChamado.tsx
-app/servicos/page.tsx
-app/agenda/page.tsx
+Arquivo:
+app/os/[id]/page.tsx
