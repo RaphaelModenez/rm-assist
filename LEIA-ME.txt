@@ -1,20 +1,6 @@
-RM Assist - Relatório final melhorado
+Envie os dois arquivos mantendo a estrutura:
 
-Melhorias:
-- cabeçalho "RM Ar Condicionado — Relatório Técnico de Atendimento"
-- resumo do atendimento com cliente, local, tipo de serviço, quantidade de equipamentos, início e conclusão
-- seção individual e bem separada para cada equipamento
-- identificação: ambiente, tipo, marca, modelo, capacidade, série, refrigerante e patrimônio (quando disponível)
-- diagnóstico e serviço executado preservam quebras de linha
-- checklist em tabela com Item / Situação / Observação
-- resumo de conformidades do checklist
-- medições técnicas mais completas
-- fotos organizadas por equipamento com legenda
-- conclusão individual: situação final, recomendações e pendências
-- materiais/peças em tabela
-- resumo financeiro com Serviço + Materiais + Total
-- assinaturas/responsáveis ao final
-- continua permitindo Imprimir / Salvar PDF pelo navegador
-
-Arquivo:
 app/os/[id]/relatorio/page.tsx
+public/logo-rm-ar-condicionado.jpg
+
+A logo precisa ficar na pasta public para aparecer também ao imprimir/salvar o relatório em PDF.

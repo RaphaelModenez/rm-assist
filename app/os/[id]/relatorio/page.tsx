@@ -67,14 +67,20 @@ export default function Relatorio(){
   </div>
 
   <article className="report">
-   <header className="report-header">
-    <div>
-     <h1>RM Ar Condicionado</h1>
-     <p>Relatório Técnico de Atendimento</p>
+   <header className="report-header" style={{alignItems:"center",gap:18}}>
+    <div style={{display:"flex",alignItems:"center",gap:16,flex:1}}>
+     <img src="/logo-rm-ar-condicionado.jpg" alt="RM Ar Condicionado" style={{width:92,height:92,objectFit:"contain",flex:"0 0 auto"}}/>
+     <div>
+      <h1 style={{marginBottom:3}}>RM Ar Condicionado</h1>
+      <p style={{margin:"2px 0"}}><b>CNPJ:</b> 40.899.752/0001-50</p>
+      <p style={{margin:"2px 0"}}>Rua Luis Trevizolli, 214 — Balneário Riviera — Americana/SP</p>
+      <p style={{margin:"2px 0"}}>Tel.: (19) 99606-7086 • rmarcondicionado@gmail.com</p>
+     </div>
     </div>
-    <div style={{textAlign:"right"}}>
-     <strong>OS #{String(d.os.numero).padStart(4,"0")}</strong>
-     <p>{(dataFim||new Date()).toLocaleDateString("pt-BR")}</p>
+    <div style={{textAlign:"right",minWidth:150}}>
+     <strong style={{fontSize:18}}>OS #{String(d.os.numero).padStart(4,"0")}</strong>
+     <p style={{margin:"4px 0"}}>{(dataFim||new Date()).toLocaleDateString("pt-BR")}</p>
+     <p style={{margin:"4px 0",fontWeight:700}}>Relatório Técnico de Atendimento</p>
     </div>
    </header>
 
@@ -209,6 +215,9 @@ export default function Relatorio(){
      <strong>RM Ar Condicionado</strong>
     </div>
    </footer>
+   <div style={{marginTop:28,paddingTop:10,borderTop:"1px solid #ddd",textAlign:"center",fontSize:11,color:"#666"}}>
+    RM Ar Condicionado • CNPJ 40.899.752/0001-50 • (19) 99606-7086 • rmarcondicionado@gmail.com
+   </div>
   </article>
  </div>
 }
