@@ -528,3 +528,122 @@ h3 { font-size: 18px; margin-bottom: 0; }
 .compact-form{margin-bottom:22px}
 @media(max-width:520px){.measure-grid,.report-grid{grid-template-columns:1fr}.timeline-item{grid-template-columns:88px 1fr}.service-card{align-items:flex-start}.report-wrap{padding:0}.report{padding:24px 18px;box-shadow:none}.report-actions{padding:12px}.report-footer{grid-template-columns:1fr;gap:42px}}
 @media print{.no-print,.bottom-nav{display:none!important}.content{padding:0}.report-wrap{padding:0;background:#fff}.report{box-shadow:none;max-width:none;padding:20px}}
+/* ===== Acabamento da tela/relatório técnico ===== */
+body.report-screen-active .bottom-nav{
+  display:none !important;
+}
+body.report-screen-active .content{
+  padding-bottom:0 !important;
+}
+
+.report-company-header{
+  align-items:center;
+  gap:24px;
+  padding-bottom:22px;
+}
+.report-company{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  flex:1;
+  min-width:0;
+}
+.report-company-logo{
+  width:118px;
+  height:118px;
+  object-fit:contain;
+  flex:0 0 118px;
+}
+.report-company-data{
+  min-width:0;
+}
+.report-company-data h1{
+  margin:0 0 7px;
+  font-size:25px;
+  line-height:1.1;
+}
+.report-company-data p{
+  margin:2px 0;
+  font-size:13px;
+  line-height:1.35;
+}
+.report-document-id{
+  width:190px;
+  flex:0 0 190px;
+  text-align:right;
+  padding-left:18px;
+  border-left:1px solid #dbe3ed;
+}
+.report-document-id span{
+  display:block;
+  color:var(--blue);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+  margin-bottom:7px;
+}
+.report-document-id strong{
+  display:block;
+  font-size:21px;
+}
+.report-document-id p{
+  margin:5px 0;
+  font-size:14px;
+}
+.report-document-id small{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  color:#52606d;
+}
+
+@media (max-width:700px){
+  .report-company-header{
+    align-items:flex-start;
+    gap:14px;
+  }
+  .report-company{
+    gap:12px;
+  }
+  .report-company-logo{
+    width:88px;
+    height:88px;
+    flex-basis:88px;
+  }
+  .report-company-data h1{
+    font-size:21px;
+  }
+  .report-company-data p{
+    font-size:12px;
+  }
+  .report-document-id{
+    width:145px;
+    flex-basis:145px;
+    padding-left:12px;
+  }
+  .report-document-id strong{
+    font-size:18px;
+  }
+}
+
+@media print{
+  body.report-screen-active .bottom-nav,
+  .bottom-nav{
+    display:none !important;
+  }
+  body.report-screen-active .content{
+    padding-bottom:0 !important;
+  }
+  .report-company-logo{
+    width:105px;
+    height:105px;
+    flex-basis:105px;
+  }
+  .report-company-data p{
+    font-size:11px;
+  }
+  .report-document-id{
+    width:175px;
+    flex-basis:175px;
+  }
+}
