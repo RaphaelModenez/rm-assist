@@ -1,6 +1,12 @@
-Envie os dois arquivos mantendo a estrutura:
+RM Assist - Histórico técnico por equipamento
 
-app/os/[id]/relatorio/page.tsx
-public/logo-rm-ar-condicionado.jpg
+Adiciona:
+- nova tela de histórico técnico por equipamento
+- total de atendimentos e concluídos
+- OS, datas, diagnóstico, serviço executado, situação final, recomendações e pendências
+- botão para abrir o relatório da OS
+- botão "Histórico técnico" na tela Editar equipamento
 
-A logo precisa ficar na pasta public para aparecer também ao imprimir/salvar o relatório em PDF.
+Arquivos:
+app/clientes/[id]/equipamentos/[equipamentoId]/historico/page.tsx
+app/clientes/[id]/equipamentos/[equipamentoId]/editar/page.tsx
