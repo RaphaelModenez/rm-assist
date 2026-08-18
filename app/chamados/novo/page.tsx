@@ -8,6 +8,7 @@ import {PRIORIDADES,TIPOS_SERVICO} from "@/lib/domain";
 
 function NovoChamadoContent(){
  const r=useRouter(),sp=useSearchParams();
+ const equipamentoInicial=sp.get("equipamento")||"";
  const [erro,setErro]=useState(""),[salvando,setSalvando]=useState(false);
  const [selecionados,setSelecionados]=useState<string[]>([]);
  const [locais,setLocais]=useState<any[]>([]),[eqs,setEqs]=useState<any[]>([]);
@@ -20,8 +21,13 @@ function NovoChamadoContent(){
    s.from("locais").select("id,nome").eq("cliente_id",f.cliente_id).order("nome"),
    s.from("equipamentos").select("id,local_id,ambiente,marca,modelo,capacidade_btu").eq("cliente_id",f.cliente_id).eq("ativo",true).order("ambiente")
   ]);
-  setLocais(loc||[]);setEqs(eq||[]);setSelecionados([]);
- })()},[f.cliente_id]);
+  setLocais(loc||[]);setEqs(eq||[]);
+  const inicial=(eq||[]).find((x:any)=>x.id===equipamentoInicial);
+  if(inicial){
+   setSelecionados([inicial.id]);
+   if(inicial.local_id)setF(a=>({...a,local_id:inicial.local_id}));
+  }else setSelecionados([]);
+ })()},[f.cliente_id,equipamentoInicial]);
 
  const lista=f.local_id?eqs.filter((x:any)=>x.local_id===f.local_id):eqs;
  const todos=lista.length>0&&lista.every((x:any)=>selecionados.includes(x.id));
