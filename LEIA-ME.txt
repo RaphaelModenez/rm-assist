@@ -1,26 +1,25 @@
-RM Assist - Múltiplos equipamentos | Etapa 3
+RM Assist - Editar e excluir agendamento
 
-O banco já foi atualizado automaticamente para permitir dados vinculados a cada equipamento.
+Adiciona na Agenda:
+- botão Editar agendamento
+- botão Excluir agendamento
+- confirmação antes de excluir
+- o chamado NÃO é apagado: apenas data e horário são removidos
+- chamado agendado volta para status Aberto após excluir o agendamento
+- atendimentos já iniciados não podem ter o agendamento excluído por engano
 
-Este patch:
-- cria a tela /os/[id]/equipamentos para OS com vários equipamentos
-- mostra um botão para cada equipamento da OS
-- salva diagnóstico, serviço executado, recomendações, situação final e pendências por equipamento
-- salva checklist por equipamento
-- salva medições por equipamento
-- salva fotos e legendas por equipamento
-- mantém a conclusão/financeiro geral na OS existente
-- modifica Serviços para abrir automaticamente a nova tela quando a OS tiver mais de um equipamento
-- modifica o relatório para gerar um único documento com uma seção para cada equipamento
+Nova tela:
+app/chamados/[id]/editar/page.tsx
+
+Ela permite editar:
+- solicitação
+- tipo de serviço
+- prioridade
+- data
+- horário
+- duração prevista
+- observações
 
 Arquivos:
-app/os/[id]/equipamentos/page.tsx
-app/os/[id]/relatorio/page.tsx
-app/servicos/page.tsx
-
-Após o commit:
-1. Abra uma OS com 2+ equipamentos.
-2. Preencha dados em dois equipamentos diferentes.
-3. Vá para Conclusão da OS.
-4. Finalize a OS.
-5. Abra o relatório e confirme as seções separadas por equipamento.
+app/agenda/page.tsx
+app/chamados/[id]/editar/page.tsx

@@ -17,36 +17,26 @@ export default function Agenda(){
   const [mostrarPassados,setMostrarPassados]=useState(false);
   const [erro,setErro]=useState("");
   const [loading,setLoading]=useState(true);
+  const [removendo,setRemovendo]=useState("");
 
-  useEffect(()=>{(async()=>{
+  async function carregar(){
     const s=getSupabase(); if(!s){setErro("Supabase não configurado.");setLoading(false);return}
     const {data,error}=await s.from("chamados")
-      .select("*, clientes(nome,nome_fantasia), ordens_servico(id,status)")
+      .select("*, clientes(nome,nome_fantasia), ordens_servico(id,status), chamado_equipamentos(equipamento_id)")
       .not("data_agendada","is",null)
       .order("data_agendada",{ascending:true})
       .order("hora_agendada",{ascending:true});
     if(error)setErro(error.message); else setCh(data||[]);
     setLoading(false);
-  })()},[]);
+  }
+
+  useEffect(()=>{carregar()},[]);
 
   const hoje=dataLocalISO();
-
   const ativos=useMemo(()=>ch.filter((x:any)=>!["concluido","cancelado"].includes(x.status)),[ch]);
-
-  const passados=useMemo(
-    ()=>ativos.filter((x:any)=>x.data_agendada<hoje),
-    [ativos,hoje]
-  );
-
-  const lista=useMemo(
-    ()=>ativos.filter((x:any)=>mostrarPassados?true:x.data_agendada>=hoje),
-    [ativos,mostrarPassados,hoje]
-  );
-
-  const hojeQtd=useMemo(
-    ()=>ativos.filter((x:any)=>x.data_agendada===hoje).length,
-    [ativos,hoje]
-  );
+  const passados=useMemo(()=>ativos.filter((x:any)=>x.data_agendada<hoje),[ativos,hoje]);
+  const lista=useMemo(()=>ativos.filter((x:any)=>mostrarPassados?true:x.data_agendada>=hoje),[ativos,mostrarPassados,hoje]);
+  const hojeQtd=useMemo(()=>ativos.filter((x:any)=>x.data_agendada===hoje).length,[ativos,hoje]);
 
   const nome=(x:any)=>x.clientes?.nome_fantasia||x.clientes?.nome||"Cliente";
   const destino=(x:any)=>x.ordens_servico?.[0]?.id?`/os/${x.ordens_servico[0].id}`:"/servicos";
@@ -55,6 +45,27 @@ export default function Agenda(){
     if(x.data_agendada===hoje)return "Hoje";
     if(x.data_agendada<hoje)return "Atrasado";
     return fmtData(x.data_agendada);
+  }
+
+  async function excluirAgendamento(x:any){
+    if(removendo)return;
+    if(x.status==="em_atendimento"){
+      return setErro("Este atendimento já foi iniciado. Altere a OS em vez de excluir o agendamento.");
+    }
+    if(!confirm(`Excluir o agendamento de ${nome(x)}?\n\nO chamado será mantido, mas ficará sem data e horário.`))return;
+
+    const s=getSupabase();if(!s)return;
+    setRemovendo(x.id);setErro("");
+    const novoStatus=x.status==="agendado"?"aberto":x.status;
+    const {error}=await s.from("chamados").update({
+      data_agendada:null,
+      hora_agendada:null,
+      status:novoStatus,
+      updated_at:new Date().toISOString()
+    }).eq("id",x.id);
+    setRemovendo("");
+    if(error)return setErro(error.message);
+    setCh(atual=>atual.filter(a=>a.id!==x.id));
   }
 
   return <div className="page">
@@ -78,18 +89,26 @@ export default function Agenda(){
 
     {loading?<p className="muted">Carregando agenda...</p>:lista.length===0?
       <section className="empty-state"><div className="empty-icon">▣</div><h2>Agenda vazia</h2><p>Nenhum atendimento agendado para exibir.</p></section>:
-      <div className="timeline">{lista.map(x=><Link href={destino(x)} className="timeline-item" key={x.id}>
+      <div className="timeline">{lista.map(x=><article className="timeline-item" key={x.id}>
         <div className="timeline-date">
           <strong>{rotuloData(x)}</strong>
           <span>{x.hora_agendada?.slice(0,5)||"—"}</span>
         </div>
-        <div>
+        <div style={{minWidth:0,flex:1}}>
           <h3>{nome(x)}</h3>
           <p>{x.tipo_servico}</p>
           <small>{x.descricao}</small>
+          {(x.chamado_equipamentos?.length||0)>0&&<small style={{display:"block",marginTop:4}}>{x.chamado_equipamentos.length} equipamento{x.chamado_equipamentos.length===1?"":"s"}</small>}
           {x.status==="em_atendimento"&&<small style={{display:"block",marginTop:4,fontWeight:700}}>Atendimento em andamento</small>}
           {x.data_agendada<hoje&&<small style={{display:"block",marginTop:4,fontWeight:700}}>Agendado para {fmtData(x.data_agendada)}</small>}
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:10}}>
+            <Link href={destino(x)} className="primary-button">{x.ordens_servico?.[0]?.id?"Abrir OS":"Abrir chamado"}</Link>
+            {x.status!=="em_atendimento"&&<Link href={`/chamados/${x.id}/editar`} className="secondary-button">Editar agendamento</Link>}
+            {x.status!=="em_atendimento"&&<button type="button" className="secondary-button" disabled={!!removendo} onClick={()=>excluirAgendamento(x)} style={{color:"#b42318",borderColor:"#f3b8b2"}}>
+              {removendo===x.id?"Excluindo...":"Excluir agendamento"}
+            </button>}
+          </div>
         </div>
-      </Link>)}</div>}
+      </article>)}</div>}
   </div>
 }
