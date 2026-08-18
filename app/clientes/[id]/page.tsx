@@ -129,6 +129,7 @@ export default function Detalhe(){
     <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}>
      <div style={{minWidth:0}}><strong>{x.ambiente||x.tipo}{!x.ativo?" • Inativo":""}</strong><span>{[x.marca,x.modelo,x.capacidade_btu?x.capacidade_btu+" BTU":null,x.refrigerante].filter(Boolean).join(" • ")}</span></div>
      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+      {c.ativo&&x.ativo&&<Link href={`/chamados/novo?cliente=${id}&equipamento=${x.id}`} className="primary-button">+ Chamado</Link>}
       <Link href={`/clientes/${id}/equipamentos/${x.id}/historico`} className="secondary-button">Histórico</Link>
       <Link href={`/clientes/${id}/equipamentos/${x.id}/editar`} className="secondary-button">Editar</Link>
      </div>
