@@ -1,15 +1,17 @@
-RM Assist - Legendas nas fotos
+RM Assist - Múltiplos equipamentos | Etapa 2
 
-Adiciona:
-- campo de texto abaixo de cada foto
-- exemplos de uso: Antes da limpeza, Durante a manutenção, Depois da higienização
-- botão Salvar legenda
-- legenda aparece também no relatório da OS
+Este patch adiciona seleção múltipla de equipamentos ao Novo Chamado e copia esses equipamentos para uma única OS ao iniciar o atendimento.
 
-Envio:
-1. Extraia o ZIP.
-2. Envie a pasta app mantendo a estrutura.
-3. Substitua:
-   app/os/[id]/page.tsx
-   app/os/[id]/relatorio/page.tsx
-4. Faça Commit changes.
+Inclui:
+- checkboxes de equipamentos
+- Selecionar todos / Desmarcar todos
+- filtro por local
+- contador de equipamentos selecionados
+- compatibilidade com chamados antigos
+- quantidade de equipamentos exibida em Chamados e OS
+
+Envie a pasta app mantendo a estrutura e substitua:
+app/chamados/novo/page.tsx
+app/servicos/page.tsx
+
+Depois faça um chamado de teste com 2 ou mais equipamentos.
