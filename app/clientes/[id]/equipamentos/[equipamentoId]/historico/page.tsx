@@ -47,7 +47,10 @@ export default function HistoricoEquipamento(){
  return <div className="page">
   <header className="simple-header">
    <div><p className="eyebrow">HISTÓRICO TÉCNICO</p><h1>{eq?.ambiente||eq?.tipo||"Equipamento"}</h1><p>{cliente?.nome_fantasia||cliente?.nome} • {[eq?.marca,eq?.modelo,eq?.capacidade_btu?`${eq.capacidade_btu} BTU`:null].filter(Boolean).join(" • ")}</p></div>
-   <Link href={`/clientes/${id}`} className="secondary-button">Voltar</Link>
+   <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+    {eq?.ativo&&<Link href={`/chamados/novo?cliente=${id}&equipamento=${equipamentoId}`} className="primary-button">+ Novo chamado</Link>}
+    <Link href={`/clientes/${id}`} className="secondary-button">Voltar</Link>
+   </div>
   </header>
 
   <div className="stat-grid" style={{marginBottom:18}}>
