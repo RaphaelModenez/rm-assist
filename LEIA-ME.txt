@@ -1,20 +1,20 @@
-RM Assist - Correção do Histórico após múltiplos equipamentos
+RM Assist - Relatório final melhorado
 
-Problema:
-O Histórico ainda fazia a consulta antiga:
-  ordens_servico -> equipamentos
-
-Depois da implementação de vários equipamentos, o Supabase passou a encontrar mais de um caminho possível entre essas tabelas e retornava:
-"Could not embed because more than one relationship was found for 'ordens_servico' and 'equipamentos'"
-
-Correção:
-- o Histórico agora consulta equipamentos pelo relacionamento:
-  ordens_servico -> ordem_servico_equipamentos -> equipamentos
-- funciona com OS de 1 ou vários equipamentos
-- mostra o ambiente quando existe apenas um equipamento
-- mostra "X equipamentos" quando a OS contém vários
-- a busca também pesquisa ambiente, marca, modelo, tipo e capacidade dos equipamentos
-- "Abrir OS" direciona para a tela de múltiplos equipamentos quando necessário
+Melhorias:
+- cabeçalho "RM Ar Condicionado — Relatório Técnico de Atendimento"
+- resumo do atendimento com cliente, local, tipo de serviço, quantidade de equipamentos, início e conclusão
+- seção individual e bem separada para cada equipamento
+- identificação: ambiente, tipo, marca, modelo, capacidade, série, refrigerante e patrimônio (quando disponível)
+- diagnóstico e serviço executado preservam quebras de linha
+- checklist em tabela com Item / Situação / Observação
+- resumo de conformidades do checklist
+- medições técnicas mais completas
+- fotos organizadas por equipamento com legenda
+- conclusão individual: situação final, recomendações e pendências
+- materiais/peças em tabela
+- resumo financeiro com Serviço + Materiais + Total
+- assinaturas/responsáveis ao final
+- continua permitindo Imprimir / Salvar PDF pelo navegador
 
 Arquivo:
-app/historico/page.tsx
+app/os/[id]/relatorio/page.tsx
