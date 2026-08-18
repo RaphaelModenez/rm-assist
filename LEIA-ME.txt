@@ -1,25 +1,22 @@
-RM Assist - Editar e excluir agendamento
+RM Assist - Cancelar início / excluir OS
 
-Adiciona na Agenda:
-- botão Editar agendamento
-- botão Excluir agendamento
-- confirmação antes de excluir
-- o chamado NÃO é apagado: apenas data e horário são removidos
-- chamado agendado volta para status Aberto após excluir o agendamento
-- atendimentos já iniciados não podem ter o agendamento excluído por engano
+Adiciona na tela Serviços:
+- Cancelar início para OS em andamento
+- Excluir OS para OS concluída (quando "Ver encerrados" estiver ativo)
 
-Nova tela:
-app/chamados/[id]/editar/page.tsx
+Cancelar início:
+- apaga a OS criada pelo início do atendimento
+- remove checklist, medições, materiais, dados por equipamento e fotos da OS
+- remove também as fotos do Storage
+- preserva o chamado original
+- se havia data agendada, o chamado volta para Agendado e reaparece na Agenda
+- sem data, volta para Aberto
 
-Ela permite editar:
-- solicitação
-- tipo de serviço
-- prioridade
-- data
-- horário
-- duração prevista
-- observações
+Excluir OS concluída:
+- exige duas confirmações
+- apaga permanentemente o histórico da OS
+- deve ser usada somente quando a OS foi criada/concluída por engano
 
 Arquivos:
-app/agenda/page.tsx
-app/chamados/[id]/editar/page.tsx
+components/CancelarExcluirOS.tsx
+app/servicos/page.tsx
