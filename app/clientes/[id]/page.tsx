@@ -125,7 +125,15 @@ export default function Detalhe(){
 
   <section className="section-block">
    <div className="section-heading"><h3>Equipamentos</h3>{c.ativo&&<Link href={`/clientes/${id}/equipamentos/novo`}>+ Adicionar</Link>}</div>
-   {eqs.length?<div className="mini-list">{eqs.map(x=><div className="mini-card" key={x.id}><div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center"}}><div><strong>{x.ambiente||x.tipo}{!x.ativo?" • Inativo":""}</strong><span>{[x.marca,x.modelo,x.capacidade_btu?x.capacidade_btu+" BTU":null,x.refrigerante].filter(Boolean).join(" • ")}</span></div><Link href={`/clientes/${id}/equipamentos/${x.id}/editar`} className="secondary-button">Editar</Link></div></div>)}</div>:<p className="muted">Nenhum equipamento.</p>}
+   {eqs.length?<div className="mini-list">{eqs.map(x=><div className="mini-card" key={x.id}>
+    <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}>
+     <div style={{minWidth:0}}><strong>{x.ambiente||x.tipo}{!x.ativo?" • Inativo":""}</strong><span>{[x.marca,x.modelo,x.capacidade_btu?x.capacidade_btu+" BTU":null,x.refrigerante].filter(Boolean).join(" • ")}</span></div>
+     <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+      <Link href={`/clientes/${id}/equipamentos/${x.id}/historico`} className="secondary-button">Histórico</Link>
+      <Link href={`/clientes/${id}/equipamentos/${x.id}/editar`} className="secondary-button">Editar</Link>
+     </div>
+    </div>
+   </div>)}</div>:<p className="muted">Nenhum equipamento.</p>}
   </section>
 
   <section className="section-block">
