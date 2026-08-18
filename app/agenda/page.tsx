@@ -3,6 +3,7 @@ import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
 import {getSupabase} from "@/lib/supabase";
 import {fmtData} from "@/lib/domain";
+import CancelarChamado from "@/components/CancelarChamado";
 
 function dataLocalISO(){
   const d=new Date();
@@ -107,6 +108,8 @@ export default function Agenda(){
             {x.status!=="em_atendimento"&&<button type="button" className="secondary-button" disabled={!!removendo} onClick={()=>excluirAgendamento(x)} style={{color:"#b42318",borderColor:"#f3b8b2"}}>
               {removendo===x.id?"Excluindo...":"Excluir agendamento"}
             </button>}
+            {x.status!=="em_atendimento"&&
+              <CancelarChamado chamadoId={x.id} status={x.status} onCancelado={()=>setCh(atual=>atual.map(a=>a.id===x.id?{...a,status:"cancelado"}:a))}/>}
           </div>
         </div>
       </article>)}</div>}

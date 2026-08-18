@@ -1,22 +1,18 @@
-RM Assist - Cancelar início / excluir OS
+RM Assist - Cancelar chamado
 
-Adiciona na tela Serviços:
-- Cancelar início para OS em andamento
-- Excluir OS para OS concluída (quando "Ver encerrados" estiver ativo)
+Adiciona a opção "Cancelar chamado" em:
+- Serviços
+- Agenda
 
-Cancelar início:
-- apaga a OS criada pelo início do atendimento
-- remove checklist, medições, materiais, dados por equipamento e fotos da OS
-- remove também as fotos do Storage
-- preserva o chamado original
-- se havia data agendada, o chamado volta para Agendado e reaparece na Agenda
-- sem data, volta para Aberto
-
-Excluir OS concluída:
-- exige duas confirmações
-- apaga permanentemente o histórico da OS
-- deve ser usada somente quando a OS foi criada/concluída por engano
+Comportamento:
+- o chamado NÃO é apagado
+- ele passa para status "cancelado"
+- cliente, local e equipamentos permanecem intactos
+- chamados cancelados deixam de aparecer nas listas ativas
+- continuam acessíveis em "Ver encerrados"
+- se o atendimento já tiver sido iniciado, o app pede para cancelar primeiro a OS/início do atendimento
 
 Arquivos:
-components/CancelarExcluirOS.tsx
+components/CancelarChamado.tsx
 app/servicos/page.tsx
+app/agenda/page.tsx

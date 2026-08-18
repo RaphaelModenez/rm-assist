@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {getSupabase} from "@/lib/supabase";
 import {fmtData} from "@/lib/domain";
 import CancelarExcluirOS from "@/components/CancelarExcluirOS";
+import CancelarChamado from "@/components/CancelarChamado";
 
 export default function Servicos(){
  const r=useRouter();const [ch,setCh]=useState<any[]>([]),[ord,setOrd]=useState<any[]>([]);
@@ -106,10 +107,14 @@ export default function Servicos(){
      <p>{c.descricao}</p>
      <small>{c.data_agendada?`${fmtData(c.data_agendada)} • ${c.hora_agendada?.slice(0,5)||""}`:"Sem agendamento"} • {c.prioridade}{c.chamado_equipamentos?.length?` • ${c.chamado_equipamentos.length} equipamentos`:""}</small>
     </div>
-    {["aberto","agendado","em_atendimento"].includes(c.status)&&
-     <button className="primary-button" disabled={!!iniciando} onClick={()=>iniciar(c)}>
-      {iniciando===c.id?"Abrindo...":c.status==="em_atendimento"?"Abrir atendimento":"Iniciar atendimento"}
-     </button>}
+    <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+     {["aberto","agendado","em_atendimento"].includes(c.status)&&
+      <button className="primary-button" disabled={!!iniciando} onClick={()=>iniciar(c)}>
+       {iniciando===c.id?"Abrindo...":c.status==="em_atendimento"?"Abrir atendimento":"Iniciar atendimento"}
+      </button>}
+     {["aberto","agendado"].includes(c.status)&&
+      <CancelarChamado chamadoId={c.id} status={c.status} onCancelado={()=>setCh(atual=>atual.map(x=>x.id===c.id?{...x,status:"cancelado"}:x))}/>}
+    </div>
    </article>)}</div>}
 
   <h3 className="form-section-title">Ordens de serviço</h3>
