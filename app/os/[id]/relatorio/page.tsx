@@ -10,6 +10,11 @@ export default function Relatorio(){
  const [erro,setErro]=useState("");
  const [urls,setUrls]=useState<Record<string,string>>({});
 
+ useEffect(()=>{
+  document.body.classList.add("report-screen-active");
+  return ()=>document.body.classList.remove("report-screen-active");
+ },[]);
+
  useEffect(()=>{(async()=>{
   const s=getSupabase();if(!s)return setErro("Supabase não configurado.");
   const {data:os,error}=await s.from("ordens_servico").select("*").eq("id",id).single();
@@ -67,20 +72,23 @@ export default function Relatorio(){
   </div>
 
   <article className="report">
-   <header className="report-header" style={{alignItems:"center",gap:18}}>
-    <div style={{display:"flex",alignItems:"center",gap:16,flex:1}}>
-     <img src="/logo-rm-ar-condicionado.jpg" alt="RM Ar Condicionado" style={{width:92,height:92,objectFit:"contain",flex:"0 0 auto"}}/>
-     <div>
-      <h1 style={{marginBottom:3}}>RM Ar Condicionado</h1>
-      <p style={{margin:"2px 0"}}><b>CNPJ:</b> 40.899.752/0001-50</p>
-      <p style={{margin:"2px 0"}}>Rua Luis Trevizolli, 214 — Balneário Riviera — Americana/SP</p>
-      <p style={{margin:"2px 0"}}>Tel.: (19) 99606-7086 • rmarcondicionado@gmail.com</p>
+   <header className="report-header report-company-header">
+    <div className="report-company">
+     <img src="/logo-rm-ar-condicionado.jpg" alt="RM Ar Condicionado" className="report-company-logo"/>
+     <div className="report-company-data">
+      <h1>RM Ar Condicionado</h1>
+      <p><b>CNPJ:</b> 40.899.752/0001-50</p>
+      <p>Rua Luis Trevizolli, 214 — Balneário Riviera</p>
+      <p>Americana/SP</p>
+      <p><b>Tel.:</b> (19) 99606-7086</p>
+      <p><b>E-mail:</b> rmarcondicionado@gmail.com</p>
      </div>
     </div>
-    <div style={{textAlign:"right",minWidth:150}}>
-     <strong style={{fontSize:18}}>OS #{String(d.os.numero).padStart(4,"0")}</strong>
-     <p style={{margin:"4px 0"}}>{(dataFim||new Date()).toLocaleDateString("pt-BR")}</p>
-     <p style={{margin:"4px 0",fontWeight:700}}>Relatório Técnico de Atendimento</p>
+    <div className="report-document-id">
+     <span>RELATÓRIO TÉCNICO</span>
+     <strong>OS #{String(d.os.numero).padStart(4,"0")}</strong>
+     <p>{(dataFim||new Date()).toLocaleDateString("pt-BR")}</p>
+     <small>Relatório de Atendimento</small>
     </div>
    </header>
 
