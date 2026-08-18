@@ -1,12 +1,20 @@
-RM Assist - Bloqueio de conclusão incompleta
+RM Assist - Correção do Histórico após múltiplos equipamentos
 
-Melhoria:
-- em OS com vários equipamentos, o app valida todos antes de concluir
-- cada equipamento precisa ter "Situação final" preenchida
-- se algum estiver faltando, a OS não é concluída
-- a mensagem informa quantos equipamentos faltam e tenta mostrar os ambientes
-- na aba Conclusão aparece um aviso com botão "Revisar equipamentos"
-- OS de um único equipamento continuam funcionando como antes
+Problema:
+O Histórico ainda fazia a consulta antiga:
+  ordens_servico -> equipamentos
+
+Depois da implementação de vários equipamentos, o Supabase passou a encontrar mais de um caminho possível entre essas tabelas e retornava:
+"Could not embed because more than one relationship was found for 'ordens_servico' and 'equipamentos'"
+
+Correção:
+- o Histórico agora consulta equipamentos pelo relacionamento:
+  ordens_servico -> ordem_servico_equipamentos -> equipamentos
+- funciona com OS de 1 ou vários equipamentos
+- mostra o ambiente quando existe apenas um equipamento
+- mostra "X equipamentos" quando a OS contém vários
+- a busca também pesquisa ambiente, marca, modelo, tipo e capacidade dos equipamentos
+- "Abrir OS" direciona para a tela de múltiplos equipamentos quando necessário
 
 Arquivo:
-app/os/[id]/page.tsx
+app/historico/page.tsx
