@@ -31,7 +31,7 @@ function AgendaContent(){
 
   async function carregar(){
     const s=getSupabase(); if(!s){setErro("Supabase não configurado.");setLoading(false);return}
-    const {data,error}=await s.from("chamados").select("*, clientes(nome,nome_fantasia), ordens_servico(id,status), chamado_equipamentos(equipamento_id)").not("data_agendada","is",null).order("data_agendada",{ascending:true}).order("hora_agendada",{ascending:true});
+    const {data,error}=await s.from("chamados").select("*, clientes(nome,nome_fantasia,whatsapp,telefone), locais(nome,endereco,numero,bairro,cidade,estado,cep), ordens_servico(id,status), chamado_equipamentos(equipamento_id)").not("data_agendada","is",null).order("data_agendada",{ascending:true}).order("hora_agendada",{ascending:true});
     if(error)setErro(error.message); else setCh(data||[]);
     setLoading(false);
   }
@@ -50,7 +50,7 @@ function AgendaContent(){
     if(diaSelecionado&&x.data_agendada!==diaSelecionado)return false;
     if(filtro!=="atrasados"&&!diaSelecionado&&!mostrarPassados&&x.data_agendada<hoje)return false;
     const nome=x.clientes?.nome_fantasia||x.clientes?.nome||"Cliente";
-    const texto=[nome,x.tipo_servico,x.descricao,x.prioridade,x.status,x.data_agendada].filter(Boolean).join(" ").toLowerCase();
+    const texto=[nome,x.tipo_servico,x.descricao,x.prioridade,x.status,x.data_agendada,x.locais?.endereco,x.locais?.cidade].filter(Boolean).join(" ").toLowerCase();
     return !termo||texto.includes(termo);
   }),[ativos,mostrarPassados,hoje,termo,diaSelecionado,filtro]);
 
@@ -76,6 +76,20 @@ function AgendaContent(){
   function rotuloData(x:any){if(x.data_agendada===hoje)return "Hoje";if(x.data_agendada<hoje)return "Atrasado";return fmtData(x.data_agendada);}
   function mudarMes(delta:number){setMesVisivel(d=>new Date(d.getFullYear(),d.getMonth()+delta,1));setDiaSelecionado(null)}
   function irHoje(){const d=new Date();setMesVisivel(new Date(d.getFullYear(),d.getMonth(),1));setDiaSelecionado(hoje)}
+  function endereco(x:any){
+    const l=x.locais;
+    if(!l?.endereco)return "";
+    return [l.endereco,l.numero,l.bairro,l.cidade,l.estado,l.cep].filter(Boolean).join(", ");
+  }
+  function wazeUrl(x:any){
+    const e=endereco(x); return e?`https://www.waze.com/ul?q=${encodeURIComponent(e)}&navigate=yes`:"";
+  }
+  function whatsappUrl(x:any){
+    let n=String(x.clientes?.whatsapp||x.clientes?.telefone||"").replace(/\D/g,"");
+    if(!n)return "";
+    if(!n.startsWith("55")&&(n.length===10||n.length===11))n=`55${n}`;
+    return `https://wa.me/${n}`;
+  }
 
   async function excluirAgendamento(x:any){
     if(removendo)return;
@@ -106,7 +120,7 @@ function AgendaContent(){
     <div style={{display:"flex",justifyContent:"space-between",gap:10,alignItems:"center",marginBottom:12,flexWrap:"wrap"}}><small className="muted">{diaSelecionado?`Serviços de ${fmtData(diaSelecionado)} · `:""}{lista.length} agendamento{lista.length===1?"":"s"}</small>{filtro!=="atrasados"&&<button className="secondary-button" onClick={()=>setMostrarPassados(!mostrarPassados)}>{mostrarPassados?"Ocultar atrasados":`Ver atrasados${passados.length?` (${passados.length})`:""}`}</button>}</div>
 
     {erro&&<div className="error-box">{erro}</div>}
-    {loading?<p className="muted">Carregando agenda...</p>:lista.length===0?<section className="empty-state"><div className="empty-icon">▣</div><h2>{filtro==="atrasados"?"Nenhum atendimento atrasado":diaSelecionado?"Nenhum serviço neste dia":"Nenhum agendamento encontrado"}</h2><p>{filtro==="atrasados"?"Não há serviços vencidos pendentes.":diaSelecionado?"Selecione outro dia no calendário ou toque em Ver todos.":"Ajuste a busca ou cadastre um novo atendimento."}</p></section>:<div className="timeline">{lista.map(x=><article className="timeline-item" key={x.id}><div className="timeline-date"><strong>{rotuloData(x)}</strong><span>{x.hora_agendada?.slice(0,5)||"—"}</span></div><div style={{minWidth:0,flex:1}}><h3>{nome(x)}</h3><p>{x.tipo_servico}</p><small>{x.descricao}</small>{(x.chamado_equipamentos?.length||0)>0&&<small style={{display:"block",marginTop:4}}>{x.chamado_equipamentos.length} equipamento{x.chamado_equipamentos.length===1?"":"s"}</small>}{x.status==="em_atendimento"&&<small style={{display:"block",marginTop:4,fontWeight:700}}>Atendimento em andamento</small>}{x.data_agendada<hoje&&<small style={{display:"block",marginTop:4,fontWeight:700}}>Agendado para {fmtData(x.data_agendada)}</small>}<div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:10}}><Link href={destino(x)} className="primary-button">{x.ordens_servico?.[0]?.id?"Abrir OS":"Abrir chamado"}</Link>{x.status!=="em_atendimento"&&<Link href={`/chamados/${x.id}/editar`} className="secondary-button">Editar agendamento</Link>}{x.status!=="em_atendimento"&&<button type="button" className="secondary-button" disabled={!!removendo} onClick={()=>excluirAgendamento(x)} style={{color:"#b42318",borderColor:"#f3b8b2"}}>{removendo===x.id?"Excluindo...":"Excluir agendamento"}</button>}{x.status!=="em_atendimento"&&<CancelarChamado chamadoId={x.id} status={x.status} onCancelado={()=>setCh(atual=>atual.map(a=>a.id===x.id?{...a,status:"cancelado"}:a))}/>}</div></div></article>)}</div>}
+    {loading?<p className="muted">Carregando agenda...</p>:lista.length===0?<section className="empty-state"><div className="empty-icon">▣</div><h2>{filtro==="atrasados"?"Nenhum atendimento atrasado":diaSelecionado?"Nenhum serviço neste dia":"Nenhum agendamento encontrado"}</h2><p>{filtro==="atrasados"?"Não há serviços vencidos pendentes.":diaSelecionado?"Selecione outro dia no calendário ou toque em Ver todos.":"Ajuste a busca ou cadastre um novo atendimento."}</p></section>:<div className="timeline">{lista.map(x=>{const waze=wazeUrl(x), whats=whatsappUrl(x), end=endereco(x);return <article className="timeline-item" key={x.id}><div className="timeline-date"><strong>{rotuloData(x)}</strong><span>{x.hora_agendada?.slice(0,5)||"—"}</span></div><div style={{minWidth:0,flex:1}}><h3>{nome(x)}</h3><p>{x.tipo_servico}</p><small>{x.descricao}</small>{end&&<small style={{display:"block",marginTop:4}}>{end}</small>}{(x.chamado_equipamentos?.length||0)>0&&<small style={{display:"block",marginTop:4}}>{x.chamado_equipamentos.length} equipamento{x.chamado_equipamentos.length===1?"":"s"}</small>}{x.status==="em_atendimento"&&<small style={{display:"block",marginTop:4,fontWeight:700}}>Atendimento em andamento</small>}{x.data_agendada<hoje&&<small style={{display:"block",marginTop:4,fontWeight:700}}>Agendado para {fmtData(x.data_agendada)}</small>}<div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:10}}><Link href={destino(x)} className="primary-button">{x.ordens_servico?.[0]?.id?"Abrir OS":"Abrir chamado"}</Link>{waze&&<a href={waze} target="_blank" rel="noopener noreferrer" className="secondary-button">Trajeto</a>}{whats&&<a href={whats} target="_blank" rel="noopener noreferrer" className="secondary-button">WhatsApp</a>}{x.status!=="em_atendimento"&&<Link href={`/chamados/${x.id}/editar`} className="secondary-button">Editar agendamento</Link>}{x.status!=="em_atendimento"&&<button type="button" className="secondary-button" disabled={!!removendo} onClick={()=>excluirAgendamento(x)} style={{color:"#b42318",borderColor:"#f3b8b2"}}>{removendo===x.id?"Excluindo...":"Excluir agendamento"}</button>}{x.status!=="em_atendimento"&&<CancelarChamado chamadoId={x.id} status={x.status} onCancelado={()=>setCh(atual=>atual.map(a=>a.id===x.id?{...a,status:"cancelado"}:a))}/>}</div></div></article>})}</div>}
   </div>
 }
 
