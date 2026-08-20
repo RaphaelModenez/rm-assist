@@ -14,7 +14,7 @@ function dataLocalISO(){
 }
 
 export default function Home(){
-  const [s,setS]=useState({hoje:0,abertos:0,andamento:0,clientes:0,concluidos:0,atrasados:0,faturamentoMes:0});
+  const [s,setS]=useState({hoje:0,abertos:0,andamento:0,clientes:0,concluidos:0,atrasados:0,pausados:0,aguardandoAgendamento:0,faturamentoMes:0});
   const [agenda,setAgenda]=useState<any[]>([]);
   const [erro,setErro]=useState("");
   const [loading,setLoading]=useState(true);
@@ -26,12 +26,14 @@ export default function Home(){
     const now=new Date();
     const [{data:ch,error:e1},{data:os,error:e2},{count:clientes,error:e3}] = await Promise.all([
       sb.from("chamados").select("*, clientes(nome,nome_fantasia), ordens_servico(id,status)").order("data_agendada",{ascending:true}).order("hora_agendada",{ascending:true}),
-      sb.from("ordens_servico").select("id,status,data_fim,valor_servico"),
+      sb.from("ordens_servico").select("id,status,data_fim,valor_servico,chamado_id"),
       sb.from("clientes").select("*",{count:"exact",head:true}).eq("ativo",true)
     ]);
     if(e1||e2||e3)setErro(e1?.message||e2?.message||e3?.message||"");
     const chamados=ch||[], ordens=os||[];
     const ativos=chamados.filter((x:any)=>!["concluido","cancelado"].includes(x.status));
+    const osPausadas=ordens.filter((x:any)=>x.status==="pausada");
+    const chamadosPausados=new Set(osPausadas.map((x:any)=>x.chamado_id).filter(Boolean));
     const faturamentoMes=ordens.filter((x:any)=>{
       if(x.status!=="concluida"||!x.data_fim)return false;
       const d=new Date(x.data_fim);
@@ -39,16 +41,18 @@ export default function Home(){
     }).reduce((total:number,x:any)=>total+Number(x.valor_servico||0),0);
 
     setS({
-      hoje:ativos.filter((x:any)=>x.data_agendada===hoje).length,
+      hoje:ativos.filter((x:any)=>x.data_agendada===hoje && !chamadosPausados.has(x.id)).length,
       abertos:ativos.filter((x:any)=>["aberto","agendado"].includes(x.status)).length,
       andamento:ordens.filter((x:any)=>x.status==="em_atendimento").length,
       clientes:clientes||0,
       concluidos:ordens.filter((x:any)=>x.status==="concluida").length,
-      atrasados:ativos.filter((x:any)=>x.data_agendada && x.data_agendada<hoje).length,
+      atrasados:ativos.filter((x:any)=>x.data_agendada && x.data_agendada<hoje && !chamadosPausados.has(x.id)).length,
+      pausados:osPausadas.length,
+      aguardandoAgendamento:ativos.filter((x:any)=>!x.data_agendada && !chamadosPausados.has(x.id)).length,
       faturamentoMes
     });
 
-    setAgenda(ativos.filter((x:any)=>x.data_agendada && x.data_agendada>=hoje).slice(0,4));
+    setAgenda(ativos.filter((x:any)=>x.data_agendada && x.data_agendada>=hoje && !chamadosPausados.has(x.id)).slice(0,4));
     setLoading(false);
   })()},[]);
 
@@ -63,7 +67,11 @@ export default function Home(){
     {erro&&<div className="error-box">{erro}</div>}
 
     {loading?<p className="muted">Atualizando painel...</p>:<>
-      {s.atrasados>0&&<Link href="/agenda" className="error-box" style={{display:"block",textDecoration:"none",marginBottom:14}}><strong>{s.atrasados} atendimento{s.atrasados===1?"":"s"} atrasado{s.atrasados===1?"":"s"}</strong><br/><span>Toque para revisar a agenda.</span></Link>}
+      {(s.pausados>0||s.atrasados>0||s.aguardandoAgendamento>0)&&<div style={{display:"grid",gap:10,marginBottom:14}}>
+        {s.pausados>0&&<Link href="/servicos" className="info-card" style={{display:"block",textDecoration:"none",borderLeft:"4px solid #ff9f0a"}}><strong>{s.pausados} atendimento{s.pausados===1?"":"s"} pausado{s.pausados===1?"":"s"}</strong><br/><span>{s.pausados===1?"Há uma OS aguardando continuidade.":"Há OS aguardando continuidade."}</span></Link>}
+        {s.atrasados>0&&<Link href="/agenda" className="error-box" style={{display:"block",textDecoration:"none",marginBottom:0}}><strong>{s.atrasados} atendimento{s.atrasados===1?"":"s"} atrasado{s.atrasados===1?"":"s"}</strong><br/><span>Toque para revisar a agenda.</span></Link>}
+        {s.aguardandoAgendamento>0&&<Link href="/servicos" className="info-card" style={{display:"block",textDecoration:"none",borderLeft:"4px solid #0a84ff"}}><strong>{s.aguardandoAgendamento} aguardando agendamento</strong><br/><span>{s.aguardandoAgendamento===1?"Chamado aberto sem data definida.":"Chamados abertos sem data definida."}</span></Link>}
+      </div>}
 
       <div className="stat-grid">
         <Link href="/agenda" className="stat-card" style={{textDecoration:"none"}}><strong>{s.hoje}</strong><span>Serviços hoje</span></Link>
