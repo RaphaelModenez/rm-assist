@@ -4,6 +4,7 @@ import "./iphone.css";
 import "./auth.css";
 import BottomNav from "@/components/BottomNav";
 import AuthGate from "@/components/AuthGate";
+import OSPauseControl from "@/components/OSPauseControl";
 
 export const metadata:Metadata={
   title:"RM Assist",
@@ -18,7 +19,7 @@ export const viewport:Viewport={themeColor:"#0a84ff",width:"device-width",initia
 export default function RootLayout({children}:{children:React.ReactNode}){
   return <html lang="pt-BR"><body>
     <AuthGate>
-      <div className="app-shell"><main className="content">{children}</main><BottomNav/></div>
+      <div className="app-shell"><main className="content">{children}</main><OSPauseControl/><BottomNav/></div>
     </AuthGate>
   </body></html>
 }
