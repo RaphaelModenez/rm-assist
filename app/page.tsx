@@ -68,9 +68,9 @@ export default function Home(){
 
     {loading?<p className="muted">Atualizando painel...</p>:<>
       {(s.pausados>0||s.atrasados>0||s.aguardandoAgendamento>0)&&<div style={{display:"grid",gap:10,marginBottom:14}}>
-        {s.pausados>0&&<Link href="/servicos" className="info-card" style={{display:"block",textDecoration:"none",borderLeft:"4px solid #ff9f0a"}}><strong>{s.pausados} atendimento{s.pausados===1?"":"s"} pausado{s.pausados===1?"":"s"}</strong><br/><span>{s.pausados===1?"Há uma OS aguardando continuidade.":"Há OS aguardando continuidade."}</span></Link>}
-        {s.atrasados>0&&<Link href="/agenda" className="error-box" style={{display:"block",textDecoration:"none",marginBottom:0}}><strong>{s.atrasados} atendimento{s.atrasados===1?"":"s"} atrasado{s.atrasados===1?"":"s"}</strong><br/><span>Toque para revisar a agenda.</span></Link>}
-        {s.aguardandoAgendamento>0&&<Link href="/servicos" className="info-card" style={{display:"block",textDecoration:"none",borderLeft:"4px solid #0a84ff"}}><strong>{s.aguardandoAgendamento} aguardando agendamento</strong><br/><span>{s.aguardandoAgendamento===1?"Chamado aberto sem data definida.":"Chamados abertos sem data definida."}</span></Link>}
+        {s.pausados>0&&<Link href="/servicos?filtro=pausados" className="info-card" style={{display:"block",textDecoration:"none",borderLeft:"4px solid #ff9f0a"}}><strong>{s.pausados} atendimento{s.pausados===1?"":"s"} pausado{s.pausados===1?"":"s"}</strong><br/><span>Toque para ver somente as OS pausadas.</span></Link>}
+        {s.atrasados>0&&<Link href="/agenda?filtro=atrasados" className="error-box" style={{display:"block",textDecoration:"none",marginBottom:0}}><strong>{s.atrasados} atendimento{s.atrasados===1?"":"s"} atrasado{s.atrasados===1?"":"s"}</strong><br/><span>Toque para ver somente os atendimentos atrasados.</span></Link>}
+        {s.aguardandoAgendamento>0&&<Link href="/servicos?filtro=aguardando_agendamento" className="info-card" style={{display:"block",textDecoration:"none",borderLeft:"4px solid #0a84ff"}}><strong>{s.aguardandoAgendamento} aguardando agendamento</strong><br/><span>Toque para ver somente os chamados sem data definida.</span></Link>}
       </div>}
 
       <div className="stat-grid">
