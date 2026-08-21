@@ -112,7 +112,7 @@ export default function EquipamentosOS(){
     if(signed?.signedUrl)setFotoUrls(p=>({...p,[path]:signed.signedUrl}));
     novas.push(row);
    }
-   setFotos(p=>[...p,...novas]);ok("Foto adicionada");
+   setFotos(p=>[...p,...novas]);ok(files.length===1?"Foto adicionada":"Fotos adicionadas");
   }catch(e:any){setErro(e.message||"Erro ao enviar foto")}
   setEnviando(false);
  }
@@ -175,9 +175,10 @@ export default function EquipamentosOS(){
 
   <section className="form-card">
    <h3>Fotos deste equipamento</h3>
+   <p className="muted" style={{marginTop:-4}}>Você pode tirar uma foto na hora ou escolher imagens já salvas no celular.</p>
    <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:12}}>
-    <label className="secondary-button">+ Foto antes<input hidden type="file" accept="image/*" capture="environment" onChange={e=>enviarFotos(e.target.files,"diagnostico")}/></label>
-    <label className="secondary-button">+ Foto durante/depois<input hidden type="file" accept="image/*" capture="environment" onChange={e=>enviarFotos(e.target.files,"execucao")}/></label>
+    <label className="secondary-button">+ Foto antes<input hidden type="file" accept="image/*" multiple onChange={e=>{enviarFotos(e.target.files,"diagnostico");e.currentTarget.value=""}}/></label>
+    <label className="secondary-button">+ Foto durante/depois<input hidden type="file" accept="image/*" multiple onChange={e=>{enviarFotos(e.target.files,"execucao");e.currentTarget.value=""}}/></label>
    </div>
    {enviando&&<p className="muted">Enviando foto...</p>}
    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))",gap:12}}>
