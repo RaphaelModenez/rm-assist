@@ -1,0 +1,72 @@
+name: RM Assist - Backup criptografado
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 5 * * *' # 02:17 em Brasilia (UTC-3)
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rm-assist-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DATABASE_URL: ${{ secrets.RM_BACKUP_DATABASE_URL }}
+      AGE_RECIPIENT: ${{ secrets.RM_BACKUP_AGE_RECIPIENT }}
+      RCLONE_CONFIG_B64: ${{ secrets.RM_BACKUP_RCLONE_CONFIG_B64 }}
+    steps:
+      - name: Conferir configuracao
+        shell: bash
+        run: |
+          set -euo pipefail
+          for key in DATABASE_URL AGE_RECIPIENT RCLONE_CONFIG_B64; do
+            if [[ -z "${!key}" ]]; then
+              echo "::error::Backup nao configurado: falta o secret correspondente a $key."
+              exit 1
+            fi
+          done
+
+      - name: Instalar ferramentas
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq age rclone
+
+      - name: Gerar e criptografar backup do PostgreSQL
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "$RUNNER_TEMP/rm-backup"
+          stamp="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+          raw="$RUNNER_TEMP/rm-backup/database.dump"
+          encrypted="$RUNNER_TEMP/rm-backup/rm-assist-db-$stamp.dump.age"
+          docker run --rm --network host \
+            -e DATABASE_URL="$DATABASE_URL" \
+            -v "$RUNNER_TEMP/rm-backup:/backup" \
+            postgres:17 \
+            sh -c 'pg_dump --dbname="$DATABASE_URL" --format=custom --no-owner --no-acl --file=/backup/database.dump'
+          test -s "$raw"
+          age --encrypt --recipient "$AGE_RECIPIENT" --output "$encrypted" "$raw"
+          test -s "$encrypted"
+          rm -f "$raw"
+          printf '%s' "$encrypted" > "$RUNNER_TEMP/backup-path"
+
+      - name: Enviar backup criptografado ao Google Drive
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          config="$RUNNER_TEMP/rclone.conf"
+          printf '%s' "$RCLONE_CONFIG_B64" | base64 --decode > "$config"
+          encrypted="$(cat "$RUNNER_TEMP/backup-path")"
+          rclone --config "$config" copyto "$encrypted" "drive:$(basename "$encrypted")" --retries 3
+          remote_size="$(rclone --config "$config" size "drive:$(basename "$encrypted")" --json)"
+          echo "$remote_size" | python3 -c 'import json,sys; assert json.load(sys.stdin)["bytes"] > 0'
+          rm -f "$config"
+          echo "Backup criptografado enviado e tamanho remoto verificado."
